@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-install nbm:cluster</actionName>
+            <displayName>install nbm:cluster</displayName>
+            <goals>
+                <goal>install</goal>
+                <goal>nbm:cluster</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-dependency:tree</actionName>
+            <displayName>dependency:tree</displayName>
+            <goals>
+                <goal>dependency:tree</goal>
+            </goals>
+        </action>
+    </actions>

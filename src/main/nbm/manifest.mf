@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Layer: org/apache/netbeans/modules/python4nb/editor/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/apache/netbeans/modules/python4nb/editor/Bundle.properties
+

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Editors">
+        <folder name="application">
+            <folder name="x-python-code">
+                <file name="org-apache-netbeans-modules-python4nb-editor-lsp-PythonLsp.instance">
+                    <attr name="instanceOf" stringvalue="org.netbeans.modules.lsp.client.spi.LanguageServerProvider"/>
+                </file>
+                <file name="org-apache-netbeans-modules-python4nb-editor-lsp-PythonLspClient.instance_hidden"/>
+            </folder>
+        </folder>
+        <folder name="text">
+            <folder name="x-python">
+                <file name="org-apache-netbeans-modules-python4nb-editor-lsp-PythonLsp.instance">
+                    <attr name="instanceOf" stringvalue="org.netbeans.modules.lsp.client.spi.LanguageServerProvider"/>
+                </file>
+                <file name="org-apache-netbeans-modules-python4nb-editor-lsp-PythonLspClient.instance_hidden"/>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>
+<!--    <folder name="Templates">
+        <folder name="Python">
+            <attr name="position" intvalue="1250"/>
+            <attr name="displayName" bundlevalue="org.netbeans.modules.python4nb.editor.Bundle#Templates_python" />
+        </folder>-->
+<!--        <folder name="Other">
+            <file name="PythonTemplate.py" url="PythonTemplate.py">
+                <attr name="SystemFileSystem.localizingBundle" stringvalue="org.netbeans.modules.python4nb.Bundle"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="templateWizardURL" urlvalue="nbresloc:/org/apache/netbeans/modules/python4nb/editor/Description.html"/>
+            </file>
+        </folder>      -->
+<!--</folder>-->
+<!--    <folder name="Editors">
+        <folder name="text">
+            <folder name="x-python">
+                <file name="python.tmLanguage.json" url="python.tmLanguage.json">
+                    <attr name="textmate-grammar" stringvalue="source.py" />
+                     Injection Based 
+                    attr name="textmate-grammar" stringvalue="python.injection" /
+                    attr name="inject-to" stringvalue="source.py" /
+                </file>
+            </folder>
+        </folder>
+    </folder>-->
+<!--</filesystem>-->
