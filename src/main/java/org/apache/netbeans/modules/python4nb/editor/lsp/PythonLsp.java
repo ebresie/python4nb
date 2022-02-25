@@ -19,83 +19,99 @@
 package org.apache.netbeans.modules.python4nb.editor.lsp;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.editor.mimelookup.MimeRegistrations;
-//import org.apache.netbeans.api.project.Project;
-//import org.netbeans.modules.cpplite.editor.Utils;
 import org.apache.netbeans.modules.python4nb.editor.file.MIMETypes;
 import org.apache.netbeans.modules.python4nb.editor.options.PythonOptions;
-import static org.apache.netbeans.modules.python4nb.exec.PythonExecutable.getDefault;
-import org.apache.netbeans.modules.python4nb.platform.PythonSupport;
-import org.apache.netbeans.modules.python4nb.preferences.PythonPreferences;
+import org.netbeans.api.annotations.common.StaticResource;
 import org.openide.util.Exceptions;
 import org.openide.util.Pair;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.lsp.client.spi.LanguageServerProvider;
 import org.openide.util.Lookup;
-import org.openide.util.NbPreferences;
 
 /**
  *
  * @author bresie
  */
-@MimeRegistrations ({
-@MimeRegistration(service = LanguageServerProvider.class,
-        mimeType = MIMETypes.PY),
+@MimeRegistrations({
     @MimeRegistration(service = LanguageServerProvider.class,
-        mimeType = MIMETypes.PYC),
+            mimeType = MIMETypes.PY),
     @MimeRegistration(service = LanguageServerProvider.class,
-        mimeType = MIMETypes.PYO)
+            mimeType = MIMETypes.PYC),
+    @MimeRegistration(service = LanguageServerProvider.class,
+            mimeType = MIMETypes.PYO)
 })
 public class PythonLsp implements LanguageServerProvider {
 
     private static final Logger LOG = Logger.getLogger(PythonLsp.class.getName());
 
     private static final Map<Project, Pair<Process, LanguageServerDescription>> prj2Server = new HashMap<>();
+    @StaticResource
+    private static final String PYTHON_ICON = "org/apache/netbeans/modules/python4nb/editor/py.png"; // NOI18N
 
     @Override
     public LanguageServerDescription startServer(Lookup lookup) {
         LOG.log(Level.INFO, "Starting Python LSP Server");
-// Based on CCPLite implementations        
-        Project prj = lookup.lookup(Project.class);
-        if (prj == null) {
-            return null;
-        }
 
         try {
             // get python location
             PythonOptions options = PythonOptions.getInstance();
             final String python = options.getPython();
-            // TODO: get python support from project
+
+            // TODO: Add handling when python not configured
+            
+            // TODO: Check if Python LSP available to be run
+
+            // TODO: get python support based on project settings
+            
+            //   Project prj = lookup.lookup(Project.class);
+            //   if (prj == null) {
+            //       return null;
+            //   }
             // PythonSupport support = PythonSupport.forProject(prj);
             // support = PythonSupport.forProject(prj);
             // PythonPreferences pyPreferences = support.getPreferences();
-
             LOG.log(Level.INFO, "Starting up Python LSP Server using {0}", python);
 
-            // TODO: Check if Python LSP available to be run
-            Process pythonServer = new ProcessBuilder(python,
-                    "-m", "pyls").start();
+            LOG.log(Level.INFO, "Started up Python LSP Server");
+            ProcessBuilder pythonServerBuilder = new ProcessBuilder(python, "-m", "pyls");
+            // setup python-language-server with python.exe -m pip install python-language-server
+            // https://pypi.org/project/python-language-server/
             
+            Process pythonServerProcess = pythonServerBuilder.redirectError(ProcessBuilder.Redirect.INHERIT).start();
             // TODO: If unable to start pyls support need to error out and/or notify user for setup
             
-            LOG.log(Level.INFO, "Started up Python LSP Server" );
-
             LOG.log(Level.INFO, "Python LSP establish input-output for server.");
-            return LanguageServerDescription.create(pythonServer.getInputStream(),
-                    pythonServer.getOutputStream(), pythonServer);
+            InputStream inputStream = pythonServerProcess.getInputStream();
+            OutputStream outputStream = pythonServerProcess.getOutputStream();
+            LanguageServerDescription lspDescription
+                    = LanguageServerDescription.create(inputStream, outputStream, pythonServerProcess);
+            return lspDescription;
         } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Failure on startup of Python LSP server.", ex);
+            Exceptions.printStackTrace(ex);
+            return null;
+        } catch (Exception ex) {
             LOG.log(Level.SEVERE, "Failure on startup of Python LSP server.", ex);
             Exceptions.printStackTrace(ex);
             return null;
         }
     }
-}
-// Based on CCPLite implementations        
+    
+    /* TODO: The below commented code is for reference, once more robust this 
+    code can be removed.
+    
+    Possible helpful examples
+    https://github.com/apache/netbeans/blob/master/webcommon/typescript.editor/src/org/netbeans/modules/typescript/editor/TypeScriptLSP.java
+    Based on CCPLite implementations        
+    */
 //        ServerRestarter restarter = lookup.lookup(ServerRestarter.class);
 //        Utils.settings().addPreferenceChangeListener(new PreferenceChangeListener() {
 //            @Override
@@ -164,7 +180,6 @@ public class PythonLsp implements LanguageServerProvider {
 //        }
 //        return null;
 //    }
-
 //    public static File getCompileCommandsDir(Project prj) {
 //        return getCompileCommandsDir(getProjectSettings(prj));
 //    }
@@ -247,7 +262,7 @@ public class PythonLsp implements LanguageServerProvider {
 //            return read;
 //        }
 //    }
-//    
+//
 //    private static class CopyOutput extends OutputStream {
 //
 //        private final OutputStream delegate;
@@ -270,6 +285,6 @@ public class PythonLsp implements LanguageServerProvider {
 //            delegate.flush();
 //            log.flush();
 //        }
-//        
+//
 //    }
-//}
+}
