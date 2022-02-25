@@ -48,6 +48,7 @@ import javax.swing.text.StyledDocument;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.annotations.common.NullAllowed;
+import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.modules.editor.indent.api.Reformat;
 import org.netbeans.modules.web.clientproject.api.util.WatchedFile;
 import org.openide.cookies.EditorCookie;
@@ -64,6 +65,9 @@ import org.openide.util.WeakListeners;
  * @since 1.88
  */
 public final class PythonFile {
+
+    @StaticResource()
+    public static final String PYTHON_ICON = "org/apache/netbeans/modules/python4nb/editor/py.png";
 
     private static final Logger LOGGER = Logger.getLogger(PythonFile.class.getName());
 

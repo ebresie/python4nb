@@ -31,4 +31,8 @@ public class MIMETypes {
     public static final String PY = "text/x-python";
     public static final String PYC = "application/x-python-code";
     public static final String PYO = "application/x-python-code";
+    
+    public static final String PY_EXT = "py";
+    public static final String PYC_EXT = "pyc";
+    public static final String PYO_EXT = "pyo";
 }

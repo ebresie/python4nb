@@ -16,6 +16,7 @@
 package org.apache.netbeans.modules.python4nb.project;
 
 import java.io.IOException;
+import org.apache.netbeans.modules.python4nb.editor.file.MIMETypes;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ProjectFactory;
 import org.netbeans.spi.project.ProjectState;
@@ -25,20 +26,26 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author ebres
  */
-    
-
-
 
 @ServiceProvider(service=ProjectFactory.class)
 public class PythonProjectFactory implements  ProjectFactory {
-
-    public static final String PROJECT_FILE = "customer.txt";
 
     //Specifies when a project is a project, i.e.,
     //if "customer.txt" is present in a folder:*
     @Override
     public boolean isProject(FileObject projectDirectory) {
-        return projectDirectory.getFileObject(PROJECT_FILE) != null;
+        // search if there are any 
+        FileObject[] childen = projectDirectory.getChildren();
+        boolean isPythonProject = false;
+        for (FileObject file: childen) {
+            if (file.existsExt(MIMETypes.PY_EXT) || 
+                    file.existsExt(MIMETypes.PYC_EXT) || 
+                    file.existsExt(MIMETypes.PYO_EXT) 
+                    ) {
+                isPythonProject = true;
+            }
+        }
+        return isPythonProject;
     }
 
     //Specifies when the project will be opened, i.e., if the project exists:*

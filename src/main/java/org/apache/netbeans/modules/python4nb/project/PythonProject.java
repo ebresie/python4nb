@@ -49,6 +49,9 @@ public class PythonProject implements  Project {
     private final ProjectState state;
     private Lookup lkp;
     
+
+    @StaticResource()
+    public static final String PYTHON_PROJECT_ICON = "org/apache/netbeans/modules/python4nb/editor/py_module.png";
     PythonProject(FileObject dir, ProjectState state) {
         this.projectDir = dir;
         this.state = state;
@@ -64,9 +67,8 @@ public class PythonProject implements  Project {
         if (lkp == null) {
             lkp = Lookups.fixed(new Object[]{
                 new PythonInfo(),
-//                new PythonProjectLogicalView(this)
-//                    ,
-//                new CustomizerProvider() {
+                new PythonProjectLogicalView(this)
+//                , new CustomizerProvider() {
 //                        @Override
 //                        public void showCustomizer() {
 //                            JOptionPane.showMessageDialog(
@@ -84,12 +86,13 @@ public class PythonProject implements  Project {
 
    private final class PythonInfo implements  ProjectInformation {
 
-@StaticResource()
-    public static final String PYTHON_ICON = "org/apache/netbeans/modules/python4nb/editor/py.png";
+//@StaticResource()
+//    public static final String PYTHON_ICON = "org/apache/netbeans/modules/python4nb/editor/py.png";
 
     @Override
     public Icon getIcon() {
-        return new ImageIcon(ImageUtilities.loadImage(PYTHON_ICON));
+        return new ImageIcon(ImageUtilities.loadImage(PYTHON_PROJECT_ICON));
+//        return new ImageIcon(ImageUtilities.loadImage(PYTHON_ICON));
     }
 
     @Override
@@ -120,8 +123,11 @@ public class PythonProject implements  Project {
    
    class PythonProjectLogicalView implements  LogicalViewProvider {
 
-    @StaticResource()
-    public static final String PYTHON_ICON = "org/apache/netbeans/modules/python4nb/editor/py.png";
+//    @StaticResource()
+//    public static final String PYTHON_ICON = "org/apache/netbeans/modules/python4nb/editor/py.png";
+//
+//        @StaticResource()
+//    public static final String PYTHON_PROJECT_ICON = "org/apache/netbeans/modules/python4nb/editor/py_module.png";
 
     private final PythonProject project;
 
@@ -170,12 +176,15 @@ public class PythonProject implements  Project {
                         CommonProjectActions.deleteProjectAction(),
                         CommonProjectActions.customizeProjectAction(),
                         CommonProjectActions.closeProjectAction()
+                        // TODO Establish applicable Python Project Actions
+                        // , CommonProjectActions.TODO (see auto completion)
                     };
         }
 
         @Override
         public Image getIcon(int type) {
-            return ImageUtilities.loadImage(PYTHON_ICON);
+//            return ImageUtilities.loadImage(PYTHON_ICON);
+            return ImageUtilities.loadImage(PYTHON_PROJECT_ICON);
         }
 
         @Override
@@ -187,7 +196,6 @@ public class PythonProject implements  Project {
         public String getDisplayName() {
             return project.getProjectDirectory().getName();
         }
-
     }
 
     @Override
