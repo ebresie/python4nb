@@ -12,3 +12,5 @@ TODO:
 - Complete Python Module Management
 
  
+Installation requires installation of following python module
+- python -m python-language-server[all]
