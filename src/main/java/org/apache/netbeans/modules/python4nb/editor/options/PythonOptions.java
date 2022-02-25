@@ -38,7 +38,7 @@ public final class PythonOptions {
 
     // Do not change arbitrary - consult with layer's folder OptionsExport
     // Path to Preferences node for storing these preferences
-    private static final String PREFERENCES_PATH = "python"; // NOI18N
+    public static final String PREFERENCES_PATH = "python.preferences"; // NOI18N
 
     private static final PythonOptions INSTANCE = new PythonOptions();
 
@@ -46,7 +46,7 @@ public final class PythonOptions {
 
     private volatile boolean nodeSearched = false;
     private volatile boolean pipSearched = false;
-    private volatile boolean expressSearched = false;
+//    private volatile boolean expressSearched = false;
 
 
     private PythonOptions() {

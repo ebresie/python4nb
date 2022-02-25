@@ -37,7 +37,7 @@ import org.openide.util.Exceptions;
 
 
 
-@NodeFactory.Registration(projectType = "python-project", position = 10)
+@NodeFactory.Registration(projectType = "org-netbeans-modules-python4nb-project", position = 10)
 public class PythonNodeFactory implements  NodeFactory {
 
     @Override

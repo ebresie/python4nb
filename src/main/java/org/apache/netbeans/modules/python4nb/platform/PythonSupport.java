@@ -53,6 +53,7 @@ import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileChangeListener;
 import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.Pair;
 import org.openide.util.RequestProcessor;
@@ -85,7 +86,7 @@ public final class PythonSupport {
         pythonPackage =  new PythonPackage(project.getProjectDirectory());
     }
 
-    @ProjectServiceProvider(service = PythonSupport.class, projectType = "org-netbeans-modules-web-clientproject") // NOI18N
+    @ProjectServiceProvider(service = PythonSupport.class, projectType = "org-netbeans-modules-python4nb-project") // NOI18N
     public static PythonSupport create(Project project) {
         PythonSupport support = new PythonSupport(project);
         // listeners
@@ -95,7 +96,10 @@ public final class PythonSupport {
     }
 
     public static PythonSupport forProject(Project project) {
-        PythonSupport support = project.getLookup().lookup(PythonSupport.class);
+        // TODO: FIgure out why lookup not working right
+        Lookup lookup = project.getLookup();
+        PythonSupport support = lookup.lookup(PythonSupport.class);
+//        PythonSupport support = project.getLookup().lookup(PythonSupport.class);
         if (support == null) {
             throw new IllegalArgumentException("Python Support not available or configured.");
         }

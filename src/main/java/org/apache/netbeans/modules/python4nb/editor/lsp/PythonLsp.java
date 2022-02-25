@@ -28,11 +28,16 @@ import org.netbeans.api.editor.mimelookup.MimeRegistrations;
 //import org.apache.netbeans.api.project.Project;
 //import org.netbeans.modules.cpplite.editor.Utils;
 import org.apache.netbeans.modules.python4nb.editor.file.MIMETypes;
+import org.apache.netbeans.modules.python4nb.editor.options.PythonOptions;
+import static org.apache.netbeans.modules.python4nb.exec.PythonExecutable.getDefault;
+import org.apache.netbeans.modules.python4nb.platform.PythonSupport;
+import org.apache.netbeans.modules.python4nb.preferences.PythonPreferences;
 import org.openide.util.Exceptions;
 import org.openide.util.Pair;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.lsp.client.spi.LanguageServerProvider;
 import org.openide.util.Lookup;
+import org.openide.util.NbPreferences;
 
 /**
  *
@@ -62,17 +67,23 @@ public class PythonLsp implements LanguageServerProvider {
         }
 
         try {
-            /* TODO: Retrieve location of python based on global configuration 
-            or per project configuration.
-            */
-//            final String python = "C:\\Apps\\python\\Python39\\python.exe";
-            final String python = "C:\\Python310\\python.exe";
+            // get python location
+            PythonOptions options = PythonOptions.getInstance();
+            final String python = options.getPython();
+            // TODO: get python support from project
+            // PythonSupport support = PythonSupport.forProject(prj);
+            // support = PythonSupport.forProject(prj);
+            // PythonPreferences pyPreferences = support.getPreferences();
+
             LOG.log(Level.INFO, "Starting up Python LSP Server using {0}", python);
 
             // TODO: Check if Python LSP available to be run
             Process pythonServer = new ProcessBuilder(python,
                     "-m", "pyls").start();
-            LOG.log(Level.INFO, "Started up Python LSP Server");
+            
+            // TODO: If unable to start pyls support need to error out and/or notify user for setup
+            
+            LOG.log(Level.INFO, "Started up Python LSP Server" );
 
             LOG.log(Level.INFO, "Python LSP establish input-output for server.");
             return LanguageServerDescription.create(pythonServer.getInputStream(),

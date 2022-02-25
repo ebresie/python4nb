@@ -49,7 +49,8 @@ public final class PythonCustomizerProvider implements ProjectCustomizer.Composi
     }
 
     @ProjectCustomizer.CompositeCategoryProvider.Registration(
-            projectType = "org.netbeans.modules.web.clientproject", // NOI18N
+           projectType = "org-netbeans-modules-python4nb-project", // NOI18N
+            
             position = 320)
     public static PythonCustomizerProvider createCustomizer() {
         return new PythonCustomizerProvider();
