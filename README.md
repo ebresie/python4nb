@@ -9,11 +9,11 @@ Available Features:
 - Python Hints/Tips leveraging the Python LSP
 
 TODO:
-- Complete Python Project functionality
-- Complete Python Platform Configuration and Installation
-- Complete Python Execution Functionality
-- Complete Python Debugging
-- Complete Python Module Management
+- Complete Python Project functionality (https://github.com/ebresie/python4nb/issues/8)
+- Complete Python Platform Configuration and Installation (https://github.com/ebresie/python4nb/issues/3)
+- Complete Python Execution Functionality (https://github.com/ebresie/python4nb/issues/4)
+- Complete Python Debugging (https://github.com/ebresie/python4nb/issues/5)
+- Complete Python Module Management (https://github.com/ebresie/python4nb/issues/6)
 
 Installation requires installation of following python module
 - python -m pip install python-language-server[all]
@@ -21,3 +21,4 @@ Installation requires installation of following python module
 For additional details on the LSP server, see 
 https://pypi.org/project/python-language-server/
 
+For version, will attempt to comply with major/minor/patch versioning as defined here https://semver.org/
