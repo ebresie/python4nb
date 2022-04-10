@@ -1,17 +1,19 @@
-# From: netbeans-textmate-files\supported languages\python\example.py
-#
-# Program to check if a string is palindrome or not
+# based on https://github.com/jschendel/python-32bit-testing/blob/master/python_info.py
 
-my_str = 'aIbohPhoBiA'
+import platform
+import struct
+import sys
 
-# make it suitable for caseless comparison
-my_str = my_str.casefold()
-
-# reverse the string
-rev_str = reversed(my_str)
-
-# check if the string is equal to its reverse
-if list(my_str) == list(rev_str):
-   print("The string is a palindrome.")
-else:
-   print("The string is not a palindrome.")
+# display this prior to running python_script.py
+print(
+    "#" * 100,
+    f"python.command={}",
+    f"python.platform.name={}",
+    f"python.path={}",
+    f"python.name={'.'.join(map(str, sys.version_info))}",
+    f"python: {'.'.join(map(str, sys.version_info))}",
+    f"python.os: {platform.uname().system.lower()}",
+    f"python.platform.bits: {struct.calcsize('P') * 8}",
+    "#" * 100,
+    sep="\n"
+)

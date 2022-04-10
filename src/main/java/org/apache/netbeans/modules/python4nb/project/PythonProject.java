@@ -28,6 +28,8 @@ import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
+import org.netbeans.spi.project.support.ant.AntProjectHelper;
+import org.netbeans.spi.project.support.ant.PropertyEvaluator;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.filesystems.FileObject;
@@ -47,8 +49,12 @@ public class PythonProject implements  Project {
 
     private final FileObject projectDir;
     private final ProjectState state;
+    protected SourceRoots sourceRoots;
+    protected SourceRoots testRoots;
     private Lookup lkp;
     
+    protected PropertyEvaluator evaluator;
+    protected AntProjectHelper helper;
 
     @StaticResource()
     public static final String PYTHON_PROJECT_ICON = "org/apache/netbeans/modules/python4nb/editor/py_module.png";
@@ -66,6 +72,8 @@ public class PythonProject implements  Project {
     public Lookup getLookup() {
         if (lkp == null) {
             lkp = Lookups.fixed(new Object[]{
+                this,
+                new PythonActionProvider(this),
                 new PythonInfo(),
                 new PythonProjectLogicalView(this)
 //                , new CustomizerProvider() {
@@ -80,6 +88,18 @@ public class PythonProject implements  Project {
             });
         }
         return lkp;
+    }
+
+    public PropertyEvaluator getEvaluator() {
+        return evaluator;
+    }
+
+    AntProjectHelper getHelper() {
+        return this.helper;
+    }
+
+    public SourceRoots getSourceRoots() {
+        return this.sourceRoots;
     }
     
  
