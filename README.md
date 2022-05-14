@@ -9,7 +9,7 @@ This is in early development with more work to follow.
 Once more development is more mature, expectations is a release will be available here and/or be published to the [Netbeans Plugin Portal]( https://plugins.netbeans.apache.org/).
 
 ## Available Features:
-- Python Colorization (via textmate gramer)
+- Python Colorization (via textmate grammar)
 - Auto completion leveraging the Python LSP 
 - Python Hints/Tips leveraging the Python LSP
 
