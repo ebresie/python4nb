@@ -6,7 +6,7 @@ The source is being published for further community support and development oppo
 
 This is in early development with more work to follow.  
 
-Once more development is more mature, expectations is a release will be available here and/or  be published to the [Netbeans Plugin Portal]( https://plugins.netbeans.apache.org/).
+Once more development is more mature, expectations is a release will be available here and/or be published to the [Netbeans Plugin Portal]( https://plugins.netbeans.apache.org/).
 
 ## Available Features:
 - Python Colorization (via textmate gramer)
@@ -29,9 +29,10 @@ Once more development is more mature, expectations is a release will be availabl
 - Python Colorization (via textmate gramer)
 - Auto completion leveraging the Python LSP 
 - Python Hints/Tips leveraging the Python LSP
-## For version, will attempt to comply with major/minor/patch versioning as defined [here](https://semver.org/)
 
-## TODO (For more speifics See [Issue area](https://github.com/ebresie/python4nb/issues):
+For version, will attempt to comply with major/minor/patch versioning as defined [here](https://semver.org/)
+
+## TODO (For more specifics details, see [project issue area](https://github.com/ebresie/python4nb/issues):
 - [Complete Python Project functionality](https://github.com/ebresie/python4nb/issues/8)
 - [Complete Python Platform Configuration and Installation](https://github.com/ebresie/python4nb/issues/3)
 - [Complete Python Execution Functionality](https://github.com/ebresie/python4nb/issues/4)
@@ -44,7 +45,7 @@ Once more development is more mature, expectations is a release will be availabl
 
 # License
 Project is being developed leveraging [Apache-2.0 license]( https://github.com/ebresie/python4nb/blob/main/LICENSE ) or applicable licenses.
-All due dilligence has been made to attribute proper licensings where applicable.
+All due diligence has been made to attribute proper licensings where applicable.
 
 Some functionality is based on or leverages functionality from other projects and attempts to comply as applicable.   
 - http://nbpython.org
