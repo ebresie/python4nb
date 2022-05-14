@@ -1,6 +1,5 @@
 # python4nb
 
-# What your project does
 This is Python Plugin for Apache Netbeans which leverages textmate grammar and LSP based functionality.
 
 The source is being published for further community support and development opportunities.
