@@ -58,22 +58,7 @@ Some functionality is based on or leverages functionality from other projects an
 
 This page is based on README.md for the project and can be modified using [editor on GitHub](https://github.com/ebresie/python4nb/edit/gh-pages/index.md).  Commits to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages on the site, based on markdown files.
 
----
-
-The below is from original Github Pages context for reference
-
-## Welcome to GitHub Pages
-
-You can use the [editor on GitHub](https://github.com/ebresie/python4nb/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/ebresie/python4nb/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+# References
+- For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) 
+- For additional Jekyll themes see [repository settings](https://github.com/ebresie/python4nb/settings/pages) which will be saved in the Jekyll `_config.yml` configuration file.  
+- For additional support on github pages content see [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact github support](https://support.github.com/contact).
