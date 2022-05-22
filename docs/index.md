@@ -1,4 +1,3 @@
-
 # python4nb
 
 This is Python Plugin for [Apache Netbeans](https://netbeans.apache.org/) which leverages textmate grammar and LSP based functionality.
@@ -16,7 +15,7 @@ Once more development is more mature, expectations is a release will be availabl
 
 # How to install it
 - Installation requires [Python](https://www.python.org/) to be installed
-- Installation of following python LSP related module to be installed in g
+- Installation of following python LSP related module to be installed in given python environment via:
 -- python -m pip install python-language-server[all]
 --- For additional details on the [Python LSP server](https://pypi.org/project/python-language-server/)
 - Compile python4nb from source and install module within given Netbeans setup 
@@ -56,7 +55,7 @@ Some functionality is based on or leverages functionality from other projects an
 # Contributors
 - [Eric Bresie](https://github.com/ebresie)
 
-This page is based on README.md for the project and can be modified using [editor on GitHub](https://github.com/ebresie/python4nb/edit/gh-pages/index.md).  Commits to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages on the site, based on markdown files.
+This page is based on README.md for the project and can be modified using [editor on GitHub](https://github.com/ebresie/python4nb/edit/gh-pages/docs/index.md).  Commits to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages on the site, based on markdown files.
 
 # References
 - For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) 
