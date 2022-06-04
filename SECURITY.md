@@ -1,7 +1,7 @@
 # Security Policy
 
 
-Python4NB is in early development so limited sercurity support is available at
+Python4NB is in early development so limited security support is available at
 the moment.
 
 The Python4NB project leverages github workflow dependabot checks 
