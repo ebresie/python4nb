@@ -12,6 +12,8 @@ Once more development is more mature, expectations is a release will be availabl
 - Python Colorization (via textmate grammar)
 - Auto completion leveraging the Python LSP 
 - Python Hints/Tips leveraging the Python LSP
+- Python Platform Configuration and Installation
+- Python Execution Functionality
 
 # How to install it
 - Installation requires [Python](https://www.python.org/) to be installed
@@ -19,12 +21,17 @@ Once more development is more mature, expectations is a release will be availabl
 -- python -m pip install python-language-server[all]
 --- For additional details on the [Python LSP server](https://pypi.org/project/python-language-server/)
 - Compile python4nb from source and install module within given Netbeans setup 
+- Open Tools...Python Platform...select python instance where LSP server module installed
 
 # Change process
 - Changes will be tracked using [project's github issues](https://github.com/ebresie/python4nb/issues).
 - Upon completion of updates for given issues, a pull request will be made, reviewed, and upon completion integrated into the master branch in github for coming release.
 
 # Change log
+## Release 0.2
+- [Python Platform Configuration and Installation](https://github.com/ebresie/python4nb/issues/3)
+- [Python Execution Functionality](https://github.com/ebresie/python4nb/issues/4)
+
 ## Release 0.1
 - Python Colorization (via textmate gramer)
 - Auto completion leveraging the Python LSP 
@@ -34,8 +41,6 @@ For version, will attempt to comply with major/minor/patch versioning as defined
 
 ## TODO (For more specifics details, see [project issue area](https://github.com/ebresie/python4nb/issues):
 - [Complete Python Project functionality](https://github.com/ebresie/python4nb/issues/8)
-- [Complete Python Platform Configuration and Installation](https://github.com/ebresie/python4nb/issues/3)
-- [Complete Python Execution Functionality](https://github.com/ebresie/python4nb/issues/4)
 - [Complete Python Debugging](https://github.com/ebresie/python4nb/issues/5)
 - [Complete Python Module Management](https://github.com/ebresie/python4nb/issues/6)
 - [Complete Unit Test functionality](https://github.com/ebresie/python4nb/issues/7)
