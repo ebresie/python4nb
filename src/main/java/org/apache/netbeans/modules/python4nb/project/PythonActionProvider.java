@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 ebres.
+ * Copyright 2022 Eric Bresie and friends. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.netbeans.modules.python4nb.project;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import org.netbeans.api.lsp.Command;
+import org.apache.netbeans.modules.python4nb.ui.actions.Command;
+//import org.netbeans.api.lsp.Command;
 import org.netbeans.spi.project.ActionProvider;
 import org.apache.netbeans.modules.python4nb.ui.actions.RunCommand;
 import org.openide.LifecycleManager;
 import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 
+// Portions of this code are based on nbPython Code.  
+
 /**
- *
- * TODO: Based on nbPython code
+ * This code identified possible actions provided for use in 
+ * project actions.
+ * 
+ * As more functionality is implemented additional commands will
+ * be added.
  */
 public class PythonActionProvider implements ActionProvider {
     PythonProject project;
@@ -39,24 +45,25 @@ public class PythonActionProvider implements ActionProvider {
         assert project != null;
         commands = new LinkedHashMap<>();
         Command[] commandArray = new Command[] {
-//            new DeleteCommand(project),
-//            new CopyCommand(project),
-//            new MoveCommand(project),
-//            new RenameCommand(project),
-//            new CleanCommand(project),
-//            new RunSingleCommand(project, false),
-//            new RunSingleCommand(project, true), // Run as Test
             new RunCommand(project, false),
             new RunCommand(project, true), // Run project as Test
-//            new DebugCommand(project) ,
-//            new DebugSingleCommand(project, false),
-//            new DebugSingleCommand(project, true), // Debug as Test
-//            new BuildCommand(project), //Build Egg
-//            new CleanBuildCommand(project) //Clean and Build Egg
+            // TODO: Add applicable commands for additional functionality
+            // new DeleteCommand(project),
+            // new CopyCommand(project),
+            // new MoveCommand(project),
+            // new RenameCommand(project),
+            // new CleanCommand(project),
+            // new RunSingleCommand(project, false),
+            // new RunSingleCommand(project, true), // Run as Test
+            // new DebugCommand(project) ,
+            // new DebugSingleCommand(project, false),
+            // new DebugSingleCommand(project, true), // Debug as Test
+            // new BuildCommand(project), //Build Egg
+            // new CleanBuildCommand(project) //Clean and Build Egg
         };
         for (Command command : commandArray) {
-//            commands.put(command.getCommandId(), command);
-            commands.put(command.getTitle(), command);
+            commands.put(command.getCommandId(), command);
+//            commands.put(command.getTitle(), command);
         }
     }
 

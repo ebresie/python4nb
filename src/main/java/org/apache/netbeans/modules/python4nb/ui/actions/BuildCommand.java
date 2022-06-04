@@ -1,21 +1,20 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Copyright 2022 Eric Bresie and friends. All rights reserved.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+// Portions of this code are based on nbPython Code.  
 package org.apache.netbeans.modules.python4nb.ui.actions;
 
 import java.io.IOException;
@@ -26,6 +25,7 @@ import org.apache.netbeans.modules.python4nb.exec.PythonExecution;
 import org.apache.netbeans.modules.python4nb.platform.PythonPlatform;
 import org.apache.netbeans.modules.python4nb.project.PythonProject;
 import org.apache.netbeans.modules.python4nb.api.Util;
+import org.apache.netbeans.modules.python4nb.ui.Utils;
 import org.netbeans.spi.project.ActionProvider;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -66,8 +66,6 @@ public class BuildCommand extends Command {
             System.out.println("Src Folder:  " + root.getPath());
         }
 
-
-
         if (findSetupFile(pyProject) == null) {
             try {
 
@@ -78,19 +76,16 @@ public class BuildCommand extends Command {
             }
         }
 
-
-
         if (platform == null) {
             return; // invalid platform user has been warn in check so safe to return
         }
 
         if (getProperties().getMainModule() == null ||
                 getProperties().getMainModule().equals("")) {
-            String main = Utils.chooseMainModule(getProject().getSourceRoots().getRoots());
+            String main = Utils.chooseMainModule(getProject());
             getProperties().setMainModule(main);
             getProperties().save();
         }
-
 
         // Obtain the FileObject of the 'setup.py' file
         FileObject script=null;
@@ -99,8 +94,6 @@ public class BuildCommand extends Command {
         }
 
         assert script != null; //check
-
-        // This code is borrowed from the other '*Command.java' classes
 
         PythonExecution pyexec = new PythonExecution();
         pyexec.setDisplayName(ProjectUtils.getInformation(pyProject).getDisplayName());
@@ -126,7 +119,6 @@ public class BuildCommand extends Command {
         pyexec.setShowWindow(true);
         pyexec.addStandardRecognizers();
 
-        //System.out.println("Executing::" + pyexec.getScript() + " with::" + pyexec.getScriptArgs());
         pyexec.run();
     }
 
@@ -165,9 +157,7 @@ public class BuildCommand extends Command {
             Map ftl_objects = new HashMap();
             ftl_objects.put("project_name", getProject().getName());
 
-
             dataTemplate.createFromTemplate(dataFolder, filename, ftl_objects);
-
 
         } catch (DataObjectNotFoundException ex) {
             Exceptions.printStackTrace(ex);

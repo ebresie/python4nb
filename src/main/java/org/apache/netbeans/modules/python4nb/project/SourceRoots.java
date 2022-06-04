@@ -11,7 +11,6 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -22,9 +21,7 @@ import java.util.Map;
 import org.apache.netbeans.modules.python4nb.util.Pair;
 import org.netbeans.api.project.ProjectManager;
 import org.netbeans.spi.project.support.ant.AntProjectEvent;
-import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.support.ant.AntProjectListener;
-import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.netbeans.spi.project.support.ant.PropertyEvaluator;
 import org.netbeans.spi.project.support.ant.ReferenceHelper;
 import org.openide.filesystems.FileObject;
@@ -33,16 +30,17 @@ import org.openide.util.Exceptions;
 import org.openide.util.Mutex;
 import org.openide.util.MutexException;
 import org.openide.util.NbBundle;
-import org.openide.util.WeakListeners;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * Represents a helper for manipulation source roots.
  * Based on SourceRoot class (common.java.api)
- * which was copied to all non java projecs.
+ * which was copied to all non java projects.
  */
+@NbBundle.Messages({
+    "NAME_src.dir=Sources",
+    "NAME_test.src.dir=Tests"
+})
+
 public final class SourceRoots {
     
     /**
@@ -77,8 +75,6 @@ public final class SourceRoots {
     
     private static final String FMT_TEST_ROOT = "src.{0}{1}.dir";
     
-
-    private final UpdateHelper helper;
     private final PropertyEvaluator evaluator;
     private final ReferenceHelper refHelper;
     private final String elementName;
@@ -92,29 +88,107 @@ public final class SourceRoots {
     private final boolean isTest;
     private final File projectDir;
 
-    public static SourceRoots create(UpdateHelper helper, PropertyEvaluator evaluator, ReferenceHelper refHelper, boolean isTest) {
-//        assert helper != null;
-        assert evaluator != null;
-        assert refHelper != null;
-        return new SourceRoots(helper, evaluator, refHelper,isTest);
+   public static SourceRoots create( PythonProject project) {
+        return new SourceRoots(project);
     }
 
-    private SourceRoots(UpdateHelper helper, PropertyEvaluator evaluator, ReferenceHelper refHelper, boolean isTest) {
+      public static SourceRoots create( File root) {
+        return new SourceRoots(root);
+    }
 
-        this.helper = helper;
-        this.evaluator = evaluator;
-        this.refHelper = refHelper;
-        this.isTest = isTest;
-        this.elementName = isTest ? E_TESTS : E_SOURCES;
-        this.newRootNameTemplate = isTest ? FMT_TEST_ROOT: FMT_SOURCE_ROOT;
-        this.projectDir = FileUtil.toFile(this.helper.getAntProjectHelper().getProjectDirectory());
+    /**
+     * Internal constructor to setup things for given project source.
+     * 
+     * @param project 
+     */
+    private SourceRoots(PythonProject project) {
+        this.projectDir = FileUtil.toFile(project.getProjectDirectory());
+        this.sourceRoots = new ArrayList<FileObject>();
+        try {
+            this.sourceRoots.add(FileUtil.createFolder(this.projectDir));
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
+        // TODO: Need to further implement this functionality or remove it
+        this.evaluator = new PropertyEvaluator() {
+            @Override
+            public String getProperty(String prop) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public String evaluate(String text) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public Map<String, String> getProperties() {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public void addPropertyChangeListener(PropertyChangeListener listener) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public void removePropertyChangeListener(PropertyChangeListener listener) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+        };
+
+        this.refHelper = new ReferenceHelper(null , null, null);
+         this.isTest = false;
+        this.elementName = E_SOURCES;
+        this.newRootNameTemplate = FMT_SOURCE_ROOT;
         this.support = new PropertyChangeSupport(this);
         this.listener = new ProjectMetadataListener();
-        this.evaluator.addPropertyChangeListener(WeakListeners.propertyChange(this.listener, this.evaluator));
-        this.helper.getAntProjectHelper().addAntProjectListener(
-                WeakListeners.create(AntProjectListener.class, this.listener, this.helper));
     }
 
+       private SourceRoots(File root) {
+        this.projectDir = root;
+        this.sourceRoots = new ArrayList<FileObject>();
+        try {
+            this.sourceRoots.add(FileUtil.createFolder(this.projectDir));
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+        this.evaluator = new PropertyEvaluator() {
+            @Override
+            public String getProperty(String prop) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public String evaluate(String text) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public Map<String, String> getProperties() {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public void addPropertyChangeListener(PropertyChangeListener listener) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public void removePropertyChangeListener(PropertyChangeListener listener) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+        };
+
+        this.refHelper = new ReferenceHelper(null , null, null);
+         this.isTest = false;
+        this.elementName = E_SOURCES;
+        this.newRootNameTemplate = FMT_SOURCE_ROOT;
+        this.support = new PropertyChangeSupport(this);
+        this.listener = new ProjectMetadataListener();
+    }
 
     /**
      * Returns the display names of source roots.
@@ -170,7 +244,7 @@ public final class SourceRoots {
                             for (String p : srcProps) {
                                 String prop = evaluator.getProperty(p);
                                 if (prop != null) {
-                                    FileObject f = helper.getAntProjectHelper().resolveFileObject(prop);
+                                    FileObject f = FileUtil.toFileObject(new File(prop));
                                     if (f == null) {
                                         continue;
                                     }
@@ -203,7 +277,7 @@ public final class SourceRoots {
                         for (String srcProp : getRootProperties()) {
                             String prop = evaluator.getProperty(srcProp);
                             if (prop != null) {
-                                File f = helper.getAntProjectHelper().resolveFile(prop);
+                                 File f = new File(prop);
                                 try {
                                     URL url = f.toURI().toURL();
                                     if (!f.exists()) {
@@ -237,7 +311,7 @@ public final class SourceRoots {
                 for (String srcProp : getRootProperties()) {
                     String prop = evaluator.getProperty(srcProp);
                     if (prop != null) {
-                        File f = helper.getAntProjectHelper().resolveFile(prop);
+                        File f = new File(prop);
                         try {
                             URL url = f.toURI().toURL();
                             if (!f.exists()) {
@@ -304,65 +378,65 @@ public final class SourceRoots {
                                     throw (IOException) ioe.initCause(ioe);
                                 }
                             }
-                            Element cfgEl = helper.getPrimaryConfigurationData(true);
-                            NodeList nl = cfgEl.getElementsByTagNameNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, elementName);
-                            assert nl.getLength() == 1 : "Illegal project.xml"; //NOI18N
-                            Element ownerElement = (Element) nl.item(0);
+//                            Element cfgEl = helper.getPrimaryConfigurationData(true);
+//                            NodeList nl = cfgEl.getElementsByTagNameNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, elementName);
+//                            assert nl.getLength() == 1 : "Illegal project.xml"; //NOI18N
+//                            Element ownerElement = (Element) nl.item(0);
                             // remove all old roots
-                            NodeList rootsNodes =
-                                    ownerElement.getElementsByTagNameNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, "root");    //NOI18N
-                            while (rootsNodes.getLength() > 0) {
-                                Element root = (Element) rootsNodes.item(0);
-                                ownerElement.removeChild(root);
-                            }
+//                            NodeList rootsNodes =
+//                                    ownerElement.getElementsByTagNameNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, "root");    //NOI18N
+//                            while (rootsNodes.getLength() > 0) {
+//                                Element root = (Element) rootsNodes.item(0);
+//                                ownerElement.removeChild(root);
+//                            }
                             // remove all unused root properties                                                        
                             Map<URL, String> propsToRemove = new HashMap<>(oldRoots2props);
                             propsToRemove.keySet().removeAll(newRoots);
-                            EditableProperties props = helper.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
-                            props.keySet().removeAll(propsToRemove.values());
-                            helper.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, props);
+//                            EditableProperties props = helper.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
+//                            props.keySet().removeAll(propsToRemove.values());
+//                            helper.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, props);
                             // add the new roots
-                            Document doc = ownerElement.getOwnerDocument();
+//                            Document doc = ownerElement.getOwnerDocument();
                             oldRoots2props.keySet().retainAll(newRoots);
                             for (URL newRoot : newRoots) {
                                 String rootName = oldRoots2props.get(newRoot);
                                 if (rootName == null) {
                                     // root is new generate property for it
-                                    props = helper.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
+//                                    props = helper.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
                                     String[] names = newRoot.getPath().split("/");  //NOI18N
                                     rootName = MessageFormat.format(
                                             newRootNameTemplate, new Object[] {names[names.length - 1], ""}); // NOI18N
                                     int rootIndex = 1;
-                                    while (props.containsKey(rootName)) {
-                                        rootIndex++;
-                                        rootName = MessageFormat.format(
-                                                newRootNameTemplate, new Object[] {names[names.length - 1], rootIndex});
-                                    }
-                                    File f = FileUtil.normalizeFile(new File(URI.create(newRoot.toExternalForm())));
-                                    File projDir = FileUtil.toFile(helper.getAntProjectHelper().getProjectDirectory());
-                                    String path = f.getAbsolutePath();
-                                    String prjPath = projDir.getAbsolutePath() + File.separatorChar;
-                                    if (path.startsWith(prjPath)) {
-                                        path = path.substring(prjPath.length());
-                                    } else {
-                                        path = refHelper.createForeignFileReference(
-                                                f, PythonProjectType.SOURCES_TYPE_PYTHON);
-                                        props = helper.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
-                                    }
-                                    props.put(rootName, path);
-                                    helper.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, props);
+//                                    while (props.containsKey(rootName)) {
+//                                        rootIndex++;
+//                                        rootName = MessageFormat.format(
+//                                                newRootNameTemplate, new Object[] {names[names.length - 1], rootIndex});
+//                                    }
+//                                    File f = FileUtil.normalizeFile(new File(URI.create(newRoot.toExternalForm())));
+//                                    File projDir = FileUtil.toFile(helper.getAntProjectHelper().getProjectDirectory());
+//                                    String path = f.getAbsolutePath();
+//                                    String prjPath = projDir.getAbsolutePath() + File.separatorChar;
+//                                    if (path.startsWith(prjPath)) {
+//                                        path = path.substring(prjPath.length());
+//                                    } else {
+//                                        path = refHelper.createForeignFileReference(
+//                                                f, PythonProjectType.SOURCES_TYPE_PYTHON);
+//                                        props = helper.getProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH);
+//                                    }
+//                                    props.put(rootName, path);
+//                                    helper.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, props);
                                 }
-                                Element newRootNode = doc.createElementNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, "root"); //NOI18N
-                                newRootNode.setAttribute("id", rootName); //NOI18N
-                                String label = newRoots2lab.get(newRoot);
-                                if (label != null
-                                        && label.length() > 0
-                                        && !label.equals(getRootDisplayName(null, rootName))) {
-                                    newRootNode.setAttribute("name", label); //NOI18N
-                                }
-                                ownerElement.appendChild(newRootNode);
+//                                Element newRootNode = doc.createElementNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, "root"); //NOI18N
+//                                newRootNode.setAttribute("id", rootName); //NOI18N
+//                                String label = newRoots2lab.get(newRoot);
+//                                if (label != null
+//                                        && label.length() > 0
+//                                        && !label.equals(getRootDisplayName(null, rootName))) {
+//                                    newRootNode.setAttribute("name", label); //NOI18N
+//                                }
+//                                ownerElement.appendChild(newRootNode);
                             }
-                            helper.putPrimaryConfigurationData(cfgEl, true);
+//                            helper.putPrimaryConfigurationData(cfgEl, true);
                             return null;
                         }
                     }
@@ -389,7 +463,8 @@ public final class SourceRoots {
                 // if the name is not given, it should be either a relative path in the project dir
                 // or absolute path when the root is not under the project dir
                 String propValue = evaluator.getProperty(propName);
-                File sourceRoot = propValue == null ? null : helper.getAntProjectHelper().resolveFile(propValue);
+//                File sourceRoot = propValue == null ? null : helper.getAntProjectHelper().resolveFile(propValue);
+                File sourceRoot = propValue == null ? null : this.projectDir ;
                 rootName = createInitialDisplayName(sourceRoot);
             }
         }
@@ -455,24 +530,25 @@ public final class SourceRoots {
         }
     }
 
+    // TODO: establish project metadata format for reading and storing
     private void readProjectMetadata() {
-        Element cfgEl = helper.getPrimaryConfigurationData(true);
-        NodeList nl = cfgEl.getElementsByTagNameNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, elementName);        
+//        Element cfgEl = helper.getPrimaryConfigurationData(true);
+//        NodeList nl = cfgEl.getElementsByTagNameNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, elementName);        
         List<String> rootProps = new ArrayList<>();
         List<String> rootNames = new ArrayList<>();
         // it can be 0 in the case when the project is created by J2SEProjectGenerator and not yet customized
-        if (nl.getLength() == 1) {
-            NodeList roots =
-                    ((Element) nl.item(0)).getElementsByTagNameNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, "root"); //NOI18N
-            for (int i = 0; i < roots.getLength(); i++) {
-                Element root = (Element) roots.item(i);
-                String value = root.getAttribute("id"); //NOI18N
-                assert value.length() > 0 : "Illegal project.xml";
-                rootProps.add(value);
-                value = root.getAttribute("name"); //NOI18N
-                rootNames.add(value);
-            }
-        }
+//        if (nl.getLength() == 1) {
+//            NodeList roots =
+//                    ((Element) nl.item(0)).getElementsByTagNameNS(PythonProjectType.PROJECT_CONFIGURATION_NAMESPACE, "root"); //NOI18N
+//            for (int i = 0; i < roots.getLength(); i++) {
+//                Element root = (Element) roots.item(i);
+//                String value = root.getAttribute("id"); //NOI18N
+//                assert value.length() > 0 : "Illegal project.xml";
+//                rootProps.add(value);
+//                value = root.getAttribute("name"); //NOI18N
+//                rootNames.add(value);
+//            }
+//        }
         sourceRootProperties = Collections.unmodifiableList(rootProps);
         sourceRootNames = Collections.unmodifiableList(rootNames);
     }

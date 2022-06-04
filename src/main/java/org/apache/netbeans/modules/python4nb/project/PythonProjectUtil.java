@@ -1,16 +1,28 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2022 Eric Bresie and friends. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.netbeans.modules.python4nb.project;
 
 import org.apache.netbeans.modules.python4nb.platform.PythonPlatform;
 import org.apache.netbeans.modules.python4nb.platform.PythonPlatformManager;
-import org.apache.netbeans.modules.python4nb.project.PythonProjectProperties;
 import org.netbeans.api.project.Project;
-import org.netbeans.spi.project.support.ant.AntProjectHelper;
 
+/**
+ * Python related Utility.
+ */
 public class PythonProjectUtil {
     
     private PythonProjectUtil() {}
@@ -20,21 +32,14 @@ public class PythonProjectUtil {
         return project.getLookup().lookup(PythonProject.class);
     }
     
-    public static AntProjectHelper getProjectHelper (final Project project) {
-        final PythonProject pyProject = getProject(project);
-        return pyProject == null ? null : pyProject.getHelper();
-    }
-    
     public static PythonPlatform getActivePlatform (final Project project) {
         final PythonProject pp = getProject(project);
         if (pp == null) {
             return null;    //No Python project
-        }
+        } 
         final PythonPlatformManager manager = PythonPlatformManager.getInstance();
-        String platformId = pp.getEvaluator().getProperty(PythonProjectProperties.ACTIVE_PLATFORM);
-        if (platformId == null) {
-            platformId = manager.getDefaultPlatform();
-        }
+
+        String platformId = manager.getDefaultPlatform();
         if (platformId == null) {
             return null;    //No Python platform in the IDE
         }

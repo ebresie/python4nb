@@ -1,11 +1,28 @@
+/*
+ * Copyright 2022 Eric Bresie and friends. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+// Portions of this code are based on nbPython Code.  
 package org.apache.netbeans.modules.python4nb.ui.actions;
 
-import java.io.File;
 import org.apache.netbeans.modules.python4nb.exec.PythonExecution;
 import org.apache.netbeans.modules.python4nb.platform.PythonPlatform;
 import org.apache.netbeans.modules.python4nb.project.PythonProject;
 import org.apache.netbeans.modules.python4nb.project.PythonProjectProperties;
+import org.apache.netbeans.modules.python4nb.ui.Utils;
+
 import org.netbeans.api.project.ProjectUtils;
 //import org.netbeans.modules.python.editor.codecoverage.PythonCoverageProvider;
 //import org.netbeans.modules.python.project.PythonActionProvider;
@@ -31,6 +48,7 @@ public class RunCommand extends Command {
 
     @Override
     public void invokeAction(Lookup context) throws IllegalArgumentException {
+// TODO: Add additional test functionality during execution
 //        if (isTest) {
 //            TestRunner testRunner = PythonActionProvider.getTestRunner(TestRunner.TestType.PY_UNIT);
 //            //boolean testTaskExist = RakeSupport.getRakeTask(project, TEST_TASK_NAME) != null;
@@ -54,7 +72,7 @@ public class RunCommand extends Command {
          
         if (getProperties().getMainModule() == null ||
                 getProperties().getMainModule().equals("")){
-            String main = Utils.chooseMainModule(getProject().getSourceRoots().getRoots());
+            String main = Utils.chooseMainModule(getProject());
             getProperties().setMainModule(main);
             getProperties().save();
         }
@@ -62,7 +80,7 @@ public class RunCommand extends Command {
         FileObject script = findMainFile(pyProject);       
         //assert script != null;        
         if (script == null ){
-            String main = Utils.chooseMainModule(getProject().getSourceRoots().getRoots());
+            String main = Utils.chooseMainModule(getProject());
             getProperties().setMainModule(main);
             getProperties().save();
             script = findMainFile(pyProject);
@@ -78,7 +96,7 @@ public class RunCommand extends Command {
         path = FileUtil.toFile(script).getAbsolutePath();
         pyexec.setScript(path);
         pyexec.setCommandArgs(platform.getInterpreterArgs());
-        pyexec.setScriptArgs(pyProject.getEvaluator().getProperty(PythonProjectProperties.APPLICATION_ARGS));
+        pyexec.setScriptArgs(pyProject.getProperties().getApplicationArgs());
         //build path & set 
         //build path & set
         pyexec.setPath(PythonPlatform.buildPath(super.buildPythonPath(platform,pyProject)));
@@ -88,10 +106,10 @@ public class RunCommand extends Command {
         pyexec.setShowWindow(true);
         pyexec.addStandardRecognizers();
 
-        PythonCoverageProvider coverageProvider = PythonCoverageProvider.get(pyProject);
-        if (coverageProvider != null && coverageProvider.isEnabled()) {
-            pyexec = coverageProvider.wrapWithCoverage(pyexec);
-        }
+//        PythonCoverageProvider coverageProvider = PythonCoverageProvider.get(pyProject);
+//        if (coverageProvider != null && coverageProvider.isEnabled()) {
+//            pyexec = coverageProvider.wrapWithCoverage(pyexec);
+//        }
 
         pyexec.run();
     }
@@ -116,7 +134,7 @@ public class RunCommand extends Command {
     
     protected static FileObject findMainFile (final PythonProject pyProject) {
         final FileObject[] roots = pyProject.getSourceRoots().getRoots();
-        final String mainFile = pyProject.getEvaluator().getProperty(PythonProjectProperties.MAIN_FILE);
+        final String mainFile = pyProject.getProperties().getMainModule();
         if (mainFile == null) {
             return null;
         }

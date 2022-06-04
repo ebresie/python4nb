@@ -1,7 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2022 Eric Bresie and friends. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+// Portions of this code are based on nbPython Code.  
 
 package org.apache.netbeans.modules.python4nb.ui.actions;
 
@@ -16,7 +29,7 @@ import org.apache.netbeans.modules.python4nb.platform.PythonPlatformManager;
 //import org.netbeans.modules.python.project.GotoTest;
 import org.apache.netbeans.modules.python4nb.project.PythonActionProvider;
 import org.apache.netbeans.modules.python4nb.project.PythonProject;
-import org.netbeans.modules.python.project.spi.TestRunner;
+//import org.netbeans.modules.python.project.spi.TestRunner;
 import org.netbeans.spi.gototest.TestLocator.LocationResult;
 import org.netbeans.spi.project.ActionProvider;
 import org.openide.filesystems.FileObject;
@@ -26,6 +39,8 @@ import org.openide.nodes.Node;
 
 import org.openide.util.Lookup;
 
+// TODO: Implement additional test and coverage functionality
+
 public class RunSingleCommand extends Command {
     protected boolean isTest;
 
@@ -34,7 +49,6 @@ public class RunSingleCommand extends Command {
         this.isTest = isTest;
     }
 
-        
     @Override
     public String getCommandId() {
         return isTest ? ActionProvider.COMMAND_TEST_SINGLE : ActionProvider.COMMAND_RUN_SINGLE;
@@ -45,14 +59,12 @@ public class RunSingleCommand extends Command {
         Node[] activatedNodes = getSelectedNodes();
         DataObject gdo = activatedNodes[0].getLookup().lookup(DataObject.class);
         FileObject file = gdo.getPrimaryFile();
-        if (file.getMIMEType().equals(PythonMIMEResolver.PYTHON_MIME_TYPE) ){
+        if (file.getMIMEType().equals(MIMETypes.PYTHON_MIME_TYPE) ){
             String path = FileUtil.toFile(file.getParent()).getAbsolutePath();
             // String workingdir = FileUtil.toFile(getProject().getSrcFolder()).getAbsolutePath();
             //int pos = path.lastIndexOf("/");
             //path = path.substring(0, pos);
             String script = FileUtil.toFile(file).getAbsolutePath();
-            //System.out.println("Folder " + path);
-            //System.out.println("File " + script);
 
             final PythonProject pyProject = getProject();
 
@@ -70,30 +82,32 @@ public class RunSingleCommand extends Command {
                         }
                     }
                 }
-                if (!isTestFile) {
-                    // Try to find the matching test
-                    LocationResult result = new GotoTest().findTest(file, -1);
-                    if (result != null && result.getFileObject() != null) {
-                        file = result.getFileObject();
-                    }
-                }
+                
+                // TODO: Add additional test functionality
+//                if (!isTestFile) {
+//                    // Try to find the matching test
+//                    LocationResult result = new GotoTest().findTest(file, -1);
+//                    if (result != null && result.getFileObject() != null) {
+//                        file = result.getFileObject();
+//                    }
+//                }
 
-                // Run test normally - don't pop up browser
-                TestRunner testRunner = PythonActionProvider.getTestRunner(TestRunner.TestType.PY_UNIT);
-                if (testRunner != null) {
-                    testRunner.getInstance().runTest(file, false);
-                    return;
-                }
+//                // Run test normally - don't pop up browser
+//                TestRunner testRunner = PythonActionProvider.getTestRunner(TestRunner.TestType.PY_UNIT);
+//                if (testRunner != null) {
+//                    testRunner.getInstance().runTest(file, false);
+//                    return;
+//                }
             }
 
             PythonExecution pyexec = new PythonExecution();
             pyexec.setDisplayName(gdo.getName());
             pyexec.setWorkingDirectory(path);
-            if(PythonOptions.getInstance().getPromptForArgs()){
-               String args =  JOptionPane.showInputDialog("Enter the args for this script.", "");
-               pyexec.setScriptArgs(args);
-
-            }
+//            if(PythonOptions.getInstance().getPromptForArgs()){
+//               String args =  JOptionPane.showInputDialog("Enter the args for this script.", "");
+//               pyexec.setScriptArgs(args);
+//
+//            }
             final PythonPlatform platform = checkProjectPythonPlatform(pyProject);
             if ( platform == null )
               return ; // invalid platform user has been warn in check so safe to return
@@ -107,10 +121,10 @@ public class RunSingleCommand extends Command {
             pyexec.setShowWindow(true);
             pyexec.addStandardRecognizers();
 
-            PythonCoverageProvider coverageProvider = PythonCoverageProvider.get(pyProject);
-            if (coverageProvider != null && coverageProvider.isEnabled()) {
-                pyexec = coverageProvider.wrapWithCoverage(pyexec);
-            }
+//            PythonCoverageProvider coverageProvider = PythonCoverageProvider.get(pyProject);
+//            if (coverageProvider != null && coverageProvider.isEnabled()) {
+//                pyexec = coverageProvider.wrapWithCoverage(pyexec);
+//            }
 
             pyexec.run();
         }
@@ -124,10 +138,9 @@ public class RunSingleCommand extends Command {
             DataObject gdo = activatedNodes[0].getLookup().lookup(DataObject.class);
             if(gdo != null && gdo.getPrimaryFile() != null)
                 results = gdo.getPrimaryFile().getMIMEType().equals(
-                        PythonMIMEResolver.PYTHON_MIME_TYPE);
+                        MIMETypes.PYTHON_MIME_TYPE);
         }
         return results;
     }
-
 
 }

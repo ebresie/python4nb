@@ -1,18 +1,36 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2022 Eric Bresie and friends. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.netbeans.modules.python4nb.project;
 
 import java.io.IOException;
 import org.netbeans.api.project.ProjectManager;
+import org.netbeans.modules.project.ant.AntBasedProjectFactorySingleton;
+import org.netbeans.spi.project.ProjectState;
+import org.netbeans.spi.project.support.ant.AntBasedProjectType;
 import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.support.ant.EditableProperties;
+import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.openide.util.Mutex;
 import org.openide.util.MutexException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+// Portions of this code are based on nbPython Code. 
 
 /**
  * Helper class to support migration from
@@ -22,15 +40,17 @@ import org.w3c.dom.Element;
  * python project, so the class has no upgrade logic.
  * Based on the UpdateHelper (java.common.api)
  */
+
+/* TODO: Determine if this class is needed since no longer leveraging 
+AntProject based functionality. */
 public final class UpdateHelper {
-    
     
     private final UpdateImplementation updateProject;
     private final AntProjectHelper helper;
     
     public UpdateHelper (final UpdateImplementation update, final AntProjectHelper helper) {
-        assert update != null;
-        assert helper != null;
+//        assert update != null;
+//        assert helper != null;
         this.updateProject = update;
         this.helper = helper;
         
@@ -176,8 +196,11 @@ public final class UpdateHelper {
      * Get the {@link AntProjectHelper} that is proxied.
      * @return the {@link AntProjectHelper} that is proxied.
      */
-    public AntProjectHelper getAntProjectHelper() {
-        return helper;
-    }
+//    public AntProjectHelper getAntProjectHelper() {
+//        if (helper == null) {
+//            helper = new AntProjectHelper(FileObject dir, Document projectXml, ProjectState state, AntBasedProjectType type)
+//        }
+//        return helper;
+//    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 ebres.
+ * Copyright 2022 Eric Bresie and friends. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,7 @@ import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
-/**
- * The code here is based on nbPython Code.  
- * 
- * TODO: Need to determine how to handle this.  This code is available from
- * nbpython sourceforge repository (as well as Oracle donation) but need to
- * ensure inclusion is within appropriate licensing constraints.
- */
+// Portions of this code are based on nbPython Code.  
 
 class PythonAutoDetector {
       private static final Logger LOGGER = Logger.getLogger(PythonAutoDetector.class.getName());
@@ -265,8 +259,9 @@ class PythonAutoDetector {
                 spath.toLowerCase().contains("python3") ||
                 spath.toLowerCase().contains("anaconda") ||
                 spath.toLowerCase().contains("pypy")||
-                spath.toLowerCase().contains("pypy3")) && 
-                !(spath.toLowerCase().contains("uninstall"));
+                spath.toLowerCase().contains("pypy3")) && !(
+                (spath.toLowerCase().contains("uninstall")) || 
+                (spath.toLowerCase().contains("pythonw")));
     }
     
     public void traverse(File dir, boolean recersive) {

@@ -1,7 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2022 Eric Bresie and friends. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+// Portions of this code are based on nbPython Code.  
 
 package org.apache.netbeans.modules.python4nb.ui.actions;
 
@@ -19,8 +32,8 @@ import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 
-public abstract class Command extends org.netbeans.api.lsp.Command{
-
+public abstract class Command { 
+// TODO: Determine if need to extend from org.netbeans.api.lsp.Command{
 
     private final PythonProject project;
     private final PythonProjectProperties properties;
@@ -57,19 +70,17 @@ public abstract class Command extends org.netbeans.api.lsp.Command{
 
     protected void showLaunchError( String message ){
       JOptionPane.showMessageDialog(null,message ,"Python Launch Error", JOptionPane.ERROR_MESSAGE);
-
     }
 
-
     /**
-     * used by children to handle sever launched errors
+     * used by children to handle severe launched errors
      * @param errMessage
      */
     protected PythonPlatform checkProjectPythonPlatform( PythonProject pyProject ){
        PythonPlatform platform = PythonProjectUtil.getActivePlatform(pyProject);
        if ( platform == null ) {
          // Better to inform the user than try to use a default unsuited
-         String platformId = pyProject.getEvaluator().getProperty(PythonProjectProperties.ACTIVE_PLATFORM);
+        String platformId = pyProject.getProperties().getActivePlatformId();
          showLaunchError( "The selected project specifies a missing or invalid Python platform : " + // NOI18N
                            platformId +
                            "\nPlease add the Python platform or choose an existing one in Project Properties. " // NOI18N
@@ -77,8 +88,6 @@ public abstract class Command extends org.netbeans.api.lsp.Command{
        }
        return platform ;
     }
-
-
 
     /**
      *
@@ -96,7 +105,9 @@ public abstract class Command extends org.netbeans.api.lsp.Command{
         File f = FileUtil.toFile(fo);
         pythonPath.add(f.getAbsolutePath());
       }
-      pythonPath.addAll(getProperties().getPythonPath());
+      if (getProperties().getPythonPath() != null ) {
+        pythonPath.addAll(getProperties().getPythonPath());
+      }
       return pythonPath ;
     }
 
