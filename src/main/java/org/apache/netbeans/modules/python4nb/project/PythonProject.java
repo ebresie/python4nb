@@ -18,11 +18,15 @@ package org.apache.netbeans.modules.python4nb.project;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import org.apache.netbeans.modules.python4nb.project.PythonSources;
+import org.apache.netbeans.modules.python4nb.ui.PythonCustomizerProvider;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
@@ -31,6 +35,7 @@ import org.netbeans.spi.project.ProjectState;
 import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.support.ant.PropertyEvaluator;
 import org.netbeans.spi.project.support.ant.ReferenceHelper;
+import org.netbeans.spi.project.ui.CustomizerProvider;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.filesystems.FileObject;
@@ -55,7 +60,7 @@ import org.openide.util.lookup.ProxyLookup;
  */
 public class PythonProject implements  Project {
 
-        public static final String SOURCES_TYPE_PYTHON = "python"; //NOI18N
+    public static final String SOURCES_TYPE_PYTHON = "python"; //NOI18N
     
     private final FileObject projectDir;
     protected SourceRoots sourceRoots;
@@ -71,6 +76,9 @@ public class PythonProject implements  Project {
 //    protected ReferenceHelper refHelper;
 //    protected AuxiliaryConfiguration aux;
 
+    
+    private static final Logger LOGGER = Logger.getLogger(PythonProject.class.getName());
+    
     @StaticResource()
     public static final String PYTHON_PROJECT_ICON = "org/apache/netbeans/modules/python4nb/editor/py_module.png";
     PythonProject(FileObject dir, ProjectState state) {
@@ -90,6 +98,8 @@ public class PythonProject implements  Project {
 
     @Override
     public FileObject getProjectDirectory() {
+        // TODO: Maybe change to  a debug or applicable log level
+        LOGGER.info("PythonProject.projectDir=" + projectDir);
         return projectDir;
     }
 
@@ -101,7 +111,8 @@ public class PythonProject implements  Project {
                 new PythonActionProvider(this),
                 new PythonInfo(),
                 new PythonProjectLogicalView(this),
-                new PythonSources(this)
+                new PythonSources(this),
+                new PythonCustomizerProvider(this) //Project custmoizer
 //TODO Determine if needed for future enhancements; remove if not needed
 //                , new CustomizerProvider() {
 //                        @Override
@@ -139,6 +150,9 @@ public class PythonProject implements  Project {
         if (this.sourceRoots == null) {
             this.sourceRoots = SourceRoots.create(this);
         }
+        
+        LOGGER.info("PythonProject.SourceRoots=" + this.sourceRoots);
+
         return this.sourceRoots;
     }
 
@@ -160,12 +174,27 @@ public class PythonProject implements  Project {
    }
 
     public PythonProjectProperties getProperties() {
+        // mcheck if python project properties exist if not then create one
         if (this.properties == null) {
             this.properties = new PythonProjectProperties(this);
-            this.properties.loadProperties();
+            // none set yet, try to find existing properties
+//            this.properties = PythonProjectProperties.findProjectPropertiesFile(this);
+            
+//                // no project properties found, create new one in memory
+//                this.properties = new PythonProjectProperties(this);
+//                // now save properties for future use
+//                this.properties.save();
+//            try {
+//                this.properties.loadProperties();
+//            } catch (IOException ex) {
+//                Exceptions.printStackTrace(ex);
+//                LOGGER.severe("Error loading PythonProject Properties.");
+//
+//            }
         }
         return properties;
      }
+    
     
  
 
@@ -250,7 +279,9 @@ public class PythonProject implements  Project {
                         CommonProjectActions.copyProjectAction(),
                         CommonProjectActions.deleteProjectAction(),
                         CommonProjectActions.customizeProjectAction(),
-                        CommonProjectActions.closeProjectAction()
+                        CommonProjectActions.closeProjectAction(),
+                    CommonProjectActions.setAsMainProjectAction(),
+                    CommonProjectActions.setProjectConfigurationAction()
                         // TODO Establish applicable Python Project Actions
                         // , CommonProjectActions.TODO (see auto completion)
                     };

@@ -15,4 +15,25 @@
                 <goal>dependency:tree</goal>
             </goals>
         </action>
+        <action>
+            <actionName>CUSTOM-Dependency Check</actionName>
+            <displayName>Dependency Check</displayName>
+            <goals>
+                <goal>dependency-check:check</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-Spotbug Check</actionName>
+            <displayName>Spotbug Check</displayName>
+            <goals>
+                <goal>spotbugs:check</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-Spotbug GUI</actionName>
+            <displayName>Spotbug GUI</displayName>
+            <goals>
+                <goal>spotbugs:gui</goal>
+            </goals>
+        </action>
     </actions>

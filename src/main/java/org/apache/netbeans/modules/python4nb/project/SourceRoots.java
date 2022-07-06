@@ -40,7 +40,6 @@ import org.openide.util.NbBundle;
     "NAME_src.dir=Sources",
     "NAME_test.src.dir=Tests"
 })
-
 public final class SourceRoots {
     
     /**
