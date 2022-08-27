@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 ebres.
+ * Copyright 2022 Eric Bresie and friends. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,26 @@
  */
 package org.apache.netbeans.modules.python4nb.project;
 
-/**
- *
- * @author ebres
- */
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.Map;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import org.apache.netbeans.modules.python4nb.project.PythonSources;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
+import org.netbeans.spi.project.AuxiliaryConfiguration;
 import org.netbeans.spi.project.ProjectState;
+import org.netbeans.spi.project.support.ant.AntProjectHelper;
+import org.netbeans.spi.project.support.ant.PropertyEvaluator;
+import org.netbeans.spi.project.support.ant.ReferenceHelper;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.AbstractNode;
@@ -43,18 +47,45 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
+// Portions of this code are based on nbPython Code.  
+
+/**
+ * This class is to reflect details and applicable attributes 
+ * about a given Python Project for use in NetBeans IDE.
+ */
 public class PythonProject implements  Project {
 
-    private final FileObject projectDir;
-    private final ProjectState state;
-    private Lookup lkp;
+        public static final String SOURCES_TYPE_PYTHON = "python"; //NOI18N
     
+    private final FileObject projectDir;
+    protected SourceRoots sourceRoots;
+    protected SourceRoots testRoots;
+    protected Lookup lkp;
+    protected PythonProjectProperties properties;
+    //TODO Determine if needed for future enhancements; remove if not needed
+//    private final ProjectState state;  // XXX May need
+//    protected AntProjectHelper helper; // XXX May need some form of Helper
+//    protected UpdateHelper updateHelper;
+//    protected LogicalViewProvider logicalView = new PythonLogicalView(this);
+//    protected PropertyEvaluator evaluator;
+//    protected ReferenceHelper refHelper;
+//    protected AuxiliaryConfiguration aux;
 
     @StaticResource()
     public static final String PYTHON_PROJECT_ICON = "org/apache/netbeans/modules/python4nb/editor/py_module.png";
     PythonProject(FileObject dir, ProjectState state) {
         this.projectDir = dir;
-        this.state = state;
+        this.lkp = getLookup();
+        this.sourceRoots = getSourceRoots();
+        this.properties = getProperties();
+//        this.state = state;
+    }
+    
+     PythonProject(File  dir) {
+        this.projectDir = FileUtil.toFileObject(dir);
+        this.lkp = getLookup(); //createLookup();    
+        this.sourceRoots = getSourceRoots();
+//        this.state = ProjectState.state;
     }
 
     @Override
@@ -66,8 +97,12 @@ public class PythonProject implements  Project {
     public Lookup getLookup() {
         if (lkp == null) {
             lkp = Lookups.fixed(new Object[]{
+                this,
+                new PythonActionProvider(this),
                 new PythonInfo(),
-                new PythonProjectLogicalView(this)
+                new PythonProjectLogicalView(this),
+                new PythonSources(this)
+//TODO Determine if needed for future enhancements; remove if not needed
 //                , new CustomizerProvider() {
 //                        @Override
 //                        public void showCustomizer() {
@@ -77,22 +112,68 @@ public class PythonProject implements  Project {
 //                                    getProjectDirectory().getName());
 //                        }
 //                }
+//            new ClassPathProviderImpl(this),
+//            new Info(), // Project information Implementation
+//            logicalView, // Logical view if project implementation
+//            new PythonOpenedHook(), //Called by project framework when project is opened (closed)
+//            new PythonProjectXmlSavedHook(), //Called when project.xml changes
+//            new PythonSources(this, helper, evaluator, sourceRoots, testRoots), //Python source grops - used by package view, factories, refactoring, ...
+//            new PythonProjectOperations(this), //move, rename, copy of project
+//            new RecommendedTemplatesImpl(this.updateHelper), // Recommended Templates
+//            new PythonCustomizerProvider(this), //Project custmoizer
+//            new PythonFileEncodingQuery(),
+//            new PythonProjectTemplateAttributesProvider(getEvaluator()),
+//            new PythonSharabilityQuery(helper, getEvaluator(), getSourceRoots(), getTestRoots()), //Sharabilit info - used by VCS
+//            helper.createCacheDirectoryProvider(), //Cache provider
+//            helper.createAuxiliaryProperties(), // AuxiliaryConfiguraion provider - used by bookmarks, project Preferences, etc
+//            new PythonPlatformProvider(getEvaluator()),
+//            new PythonCoverageProvider(this),
+//            new PythonProjectSourceLevelQuery(evaluator, "")
             });
         }
         return lkp;
     }
+
+    public SourceRoots getSourceRoots() {
+        // if source root has not been established yet, try to set based on project directory
+        if (this.sourceRoots == null) {
+            this.sourceRoots = SourceRoots.create(this);
+        }
+        return this.sourceRoots;
+    }
+
+    public SourceRoots getTestRoots() {
+        return this.testRoots;
+    }
+
+    public FileObject[] getSourceRootFiles() {
+        return getSourceRoots().getRoots();
+    }
+
+    public FileObject[] getTestSourceRootFiles() {
+        return getTestRoots().getRoots();
+    }
+
+    public Object getName() {
+        PythonInfo pi = lkp.lookup(PythonInfo.class);
+        return pi.getName();
+   }
+
+    public PythonProjectProperties getProperties() {
+        if (this.properties == null) {
+            this.properties = new PythonProjectProperties(this);
+            this.properties.loadProperties();
+        }
+        return properties;
+     }
     
  
 
    private final class PythonInfo implements  ProjectInformation {
 
-//@StaticResource()
-//    public static final String PYTHON_ICON = "org/apache/netbeans/modules/python4nb/editor/py.png";
-
     @Override
     public Icon getIcon() {
         return new ImageIcon(ImageUtilities.loadImage(PYTHON_PROJECT_ICON));
-//        return new ImageIcon(ImageUtilities.loadImage(PYTHON_ICON));
     }
 
     @Override
@@ -122,12 +203,6 @@ public class PythonProject implements  Project {
     }
    
    class PythonProjectLogicalView implements  LogicalViewProvider {
-
-//    @StaticResource()
-//    public static final String PYTHON_ICON = "org/apache/netbeans/modules/python4nb/editor/py.png";
-//
-//        @StaticResource()
-//    public static final String PYTHON_PROJECT_ICON = "org/apache/netbeans/modules/python4nb/editor/py_module.png";
 
     private final PythonProject project;
 
@@ -183,7 +258,6 @@ public class PythonProject implements  Project {
 
         @Override
         public Image getIcon(int type) {
-//            return ImageUtilities.loadImage(PYTHON_ICON);
             return ImageUtilities.loadImage(PYTHON_PROJECT_ICON);
         }
 

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.netbeans.modules.python4nb.api.Util;
 import org.apache.netbeans.modules.python4nb.editor.file.PythonPackage;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
@@ -39,12 +40,16 @@ import org.apache.netbeans.modules.python4nb.ui.Notifications;
 import org.apache.netbeans.modules.python4nb.util.PythonUtils;
 import org.apache.netbeans.modules.python4nb.util.StringUtils;
 import org.apache.netbeans.modules.python4nb.ui.PythonRunPanel;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.netbeans.modules.web.clientproject.api.BadgeIcon;
 import org.netbeans.modules.web.clientproject.api.platform.PlatformProviders;
 import org.netbeans.modules.web.clientproject.spi.CustomizerPanelImplementation;
 import org.netbeans.modules.web.clientproject.spi.platform.PlatformProviderImplementation;
 import org.netbeans.modules.web.clientproject.spi.platform.PlatformProviderImplementationListener;
 import org.netbeans.spi.project.ActionProvider;
+import org.netbeans.spi.project.support.ant.PropertyEvaluator;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
@@ -56,6 +61,8 @@ public final class PythonPlatformProvider implements PlatformProviderImplementat
 
     private static final Logger LOGGER = Logger.getLogger(PythonPlatformProvider.class.getName());
 
+//    private final PropertyEvaluator evaluator;
+    
     public static final String IDENT = "python"; // NOI18N
 
     static final RequestProcessor RP = new RequestProcessor(PythonPlatformProvider.class);
@@ -66,6 +73,12 @@ public final class PythonPlatformProvider implements PlatformProviderImplementat
     private final BadgeIcon badgeIcon;
     private final PlatformProviderImplementationListener.Support listenerSupport = new PlatformProviderImplementationListener.Support();
 
+    public PythonPlatformProvider(final PropertyEvaluator evaluator) {
+//        this.evaluator = evaluator;
+        badgeIcon = new BadgeIcon(
+                ImageUtilities.loadImage(ICON_PATH),
+                PythonPlatformProvider.class.getResource("/" + ICON_PATH)); // NOI18N
+    }
 
     public PythonPlatformProvider() {
         badgeIcon = new BadgeIcon(
@@ -281,4 +294,49 @@ public final class PythonPlatformProvider implements PlatformProviderImplementat
         PythonSupport.forProject(project).getPreferences().setRunEnabled(runEnabled);
     }
 
+    // TODO: Based on nbPython
+    public PythonPlatform getPlatform() {
+        ensurePlatformsReady();
+        // TODO: Determine if "Property Evalutor" logic is needed
+//        String id = evaluator.getProperty("platform.active"); // NOI18N
+//        String id = evaluator.getProperty("platform.active"); // NOI18N
+        PythonPlatformManager manager = PythonPlatformManager.getInstance();
+//        if (id == null) {
+//            id = manager.getDefaultPlatform();
+//        }
+
+        String id = manager.getDefaultPlatform();
+        
+        PythonPlatform platform = manager.getPlatform(id);
+        if (platform == null) {
+            LOGGER.info("Platform with id '" + id + "' does not exist. Using default platform.");
+            platform = manager.getPlatform(manager.getDefaultPlatform());
+        }
+        return platform;
+        
+    }
+    
+       private void ensurePlatformsReady() {
+        if (!Util.isFirstPlatformTouch()) {
+            return;
+        }
+        String handleMessage = NbBundle.getMessage(PythonPlatformProvider.class, "PythonPlatformProvider.PythonPlatformAutoDetection");
+        ProgressHandle ph = ProgressHandleFactory.createHandle(handleMessage);
+        ph.start();
+        try {
+            Thread autoDetection = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    PythonPlatformManager.getInstance().autoDetect();
+                }
+            }, "Python Platform AutoDetection"); // NOI18N
+            autoDetection.start();
+            autoDetection.join();
+        } catch (InterruptedException ex) {
+            Exceptions.printStackTrace(ex);
+                // Restore interrupted state...
+                Thread.currentThread().interrupt();
+        }
+        ph.finish();
+    }
 }

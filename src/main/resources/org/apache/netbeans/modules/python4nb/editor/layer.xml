@@ -19,6 +19,19 @@
             </folder>
         </folder>
     </folder>
+       <folder name="Actions">
+        <folder name="Python">
+            <file name="org-apache-netbeans-modules-python4nb-platform-PythonManagerAction.instance"/>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="Tools">
+            <file name="org-apache-netbeans-modules-python4nb-platform-PythonManagerAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Python/org-apache-netbeans-modules-python4nb-platform-PythonManagerAction.instance"/>
+                <attr name="position" intvalue="350"/>
+            </file>
+        </folder>
+    </folder>
 </filesystem>
 <!--    <folder name="Templates">
         <folder name="Python">

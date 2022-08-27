@@ -28,9 +28,14 @@ import org.apache.netbeans.modules.python4nb.util.FileUtils;
 import org.apache.netbeans.modules.python4nb.util.PythonUtils;
 import org.openide.util.NbPreferences;
 
-public final class PythonOptions {
+/** TODO: Some of this code is based on nbPython code.  Need to 
+determine how to handle this.  Either need to get permission/approval
+for use or will need to rework/replace it with python4nb equivalent. */
 
+public final class PythonOptions {
+    public static String PYTHON_COMMAND = "python.command";
     public static final String PYTHON_PATH = "python.path"; // NOI18N
+    public static String PYTHON_DEFAULT = "python.default"; 
     public static final String PYTHON_SOURCES_PATH = "python.sources.path"; // NOI18N
     public static final String PIP_PATH = "pip.path"; // NOI18N
 //    public static final String NPM_IGNORE_NODE_MODULES = "npm.ignore.node_modules"; // NOI18N
@@ -40,9 +45,9 @@ public final class PythonOptions {
     // Path to Preferences node for storing these preferences
     public static final String PREFERENCES_PATH = "python.preferences"; // NOI18N
 
-    private static final PythonOptions INSTANCE = new PythonOptions();
-
     private final Preferences preferences;
+    private String defaultPython = "";
+    private static PythonOptions instance;
 
     private volatile boolean nodeSearched = false;
     private volatile boolean pipSearched = false;
@@ -50,11 +55,14 @@ public final class PythonOptions {
 
 
     private PythonOptions() {
-        preferences = NbPreferences.forModule(PythonOptions.class).node(PREFERENCES_PATH);
+        preferences = NbPreferences.forModule(PythonOptions.class)
+                .node(PREFERENCES_PATH);
     }
 
     public static PythonOptions getInstance() {
-        return INSTANCE;
+        if(instance == null)
+            instance = new PythonOptions();
+        return instance;
     }
 
     public void addPreferenceChangeListener(PreferenceChangeListener listener) {
@@ -141,5 +149,20 @@ public final class PythonOptions {
 //    public void setExpress(String express) {
 //        preferences.put(EXPRESS_PATH, express);
 //    }
+
+    public String getPythonDefault() {
+        return preferences.get(PYTHON_DEFAULT, defaultPython);
+    }
+
+    public void setPythonDefault(String defaultPlatform) {
+        preferences.put(PYTHON_DEFAULT, defaultPlatform);
+    }
+    
+    public String getPythonCommand() {
+        return preferences.get(PYTHON_COMMAND, defaultPython);
+    }
+    public void setPythonCommand(String command)  {
+        preferences.put(PYTHON_COMMAND, command);
+    }
 
 }
