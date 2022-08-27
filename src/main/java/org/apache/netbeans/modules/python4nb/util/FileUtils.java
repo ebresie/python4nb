@@ -382,6 +382,11 @@ public final class FileUtils {
                     name = name.substring(archiveRootLength);
                 }
                 File destPath = new File(destination, name);
+                /* Protect against malicious archives by validating destination. 
+                See https://githuib.com/ebresie/python4nb/issues/2 */
+                if (!destPath.toPath().normalize().startsWith(destination.toPath())) {
+                    throw new IOException("Bad archive entry");
+                }
                 if (tarEntry.isDirectory()) {
                     if (!destPath.isDirectory()
                             && !destPath.mkdirs()) {
