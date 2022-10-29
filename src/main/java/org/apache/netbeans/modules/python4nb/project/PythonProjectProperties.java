@@ -34,11 +34,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTextField;
 import org.apache.netbeans.modules.python4nb.util.Pair;
 import org.netbeans.api.project.ProjectManager;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.openide.filesystems.FileChangeListener;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.Mutex;
 import org.openide.util.MutexException;
@@ -52,6 +54,8 @@ public class PythonProjectProperties {
     public static final String PYTHON_LIB_PATH = "python.lib.path"; //NOI18N
     public static final String JAVA_LIB_PATH = "java.lib.path";     //NOI18N
     public static final String SOURCE_ENCODING = "source.encoding"; //NOI18N
+    public static final String PROJECT_NAME = "python.project.name"; //NOI18N
+    public static final String PROJECT_DESCRIPTION = "python.project.description"; //NOI18N
    
    public static final String EMPTY_VALUE = ""; 
     //Relative path from project directory to the customary shared properties projectPropertiesFile.
@@ -72,7 +76,10 @@ public class PythonProjectProperties {
     private volatile ArrayList<String>pythonPath;
     private volatile ArrayList<String>javaPath;
     private volatile String activePlatformId;
-    
+    private volatile String name;
+    private volatile String description;
+
+
     private static final Logger LOGGER = Logger.getLogger(PythonProjectProperties.class.getName());
     public static  final String DEFAULT_ENCODING = "utf-8";
 
@@ -105,8 +112,12 @@ public class PythonProjectProperties {
     }
     
     public String getEncoding () {
-        if (this.encoding == null) {
+        if (this.encoding == null || this.encoding.equals("")) {
             this.encoding = projectProperties.getProperty(SOURCE_ENCODING);
+            // still no encoding to set to default
+            if (this.encoding == null || this.encoding.equals("")) {
+              this.encoding = DEFAULT_ENCODING;
+            }
         }
         return this.encoding;
     }
@@ -118,10 +129,17 @@ public class PythonProjectProperties {
             final String[] rootProps = sourceRoots.getRootProperties();
             final URL[] rootURLs = sourceRoots.getRootURLs();
             final List<Pair<File,String>> data = new LinkedList<>();
+            if (rootURLs==null || rootURLs.length == 0) {
+                // no paths identified yet add project path
+                 File f = FileUtil.toFile(project.getProjectDirectory());
+                 final String s = f.getName();
+                data.add(Pair.of(f, s));
+            } else {
             for (int i=0; i< rootURLs.length; i++) {                
                 final File f  = new File (URI.create (rootURLs[i].toExternalForm()));            
                 final String s = sourceRoots.getRootDisplayName(rootLabels[i], rootProps[i]);
                 data.add(Pair.of(f, s));
+            }
             }
             this.sourceRoots = data;
         }
@@ -229,14 +247,16 @@ public class PythonProjectProperties {
     public void save () {
         try {
 //            if (this.sourceRoots != null) {
-// TODO: Determine if still needed, believe it gets addressed druing other context so commenting for now and remove if not needed
-                final SourceRoots sr = this.project.getSourceRoots();
+/* TODO: Determine if still needed, believe save get partly address in 
+saveProperties context so commenting some existing logic now and remove if not needed */
+//                final SourceRoots sr = this.project.getSourceRoots();
 //                if (this.sourceRoots == null) {
 //                    this.sourceRoots = this.getSourceRoots();
 //                }
 //                sr.putRoots(this.sourceRoots);
-                // TODO: Make sure this works correctly and stores all needed
-                this.projectProperties.put(SRC_DIR , sr.toString());
+//                // TODO: Make sure this works correctly and stores all needed
+////                this.projectProperties.put(SRC_DIR , sr.toString());
+//                this.projectProperties.put(SRC_DIR , sr.getRoots());
 //            }
 //            if (this.testRoots != null) {
 //                final SourceRoots sr = this.project.getTestRoots();
@@ -259,21 +279,50 @@ public class PythonProjectProperties {
     }
     
     /**
-     * Takes current properties in memory and saves them into project projecteist projectPropertiesFile
+     * Takes current properties in memory and saves into projectProperties file
     */
     private void saveProperties () throws IOException {
         
         // make sure current values are set prior to saving
+        
+        
+        // name
+        if (this.name != null) {
+            this.projectProperties.put(PROJECT_NAME, this.name);
+        } else {
+            // do it based on project name or specically the ProjectInfo attribure
+            
+            /* TODO: Need to determine if "PythonInfo" may be serving similar 
+            puporpse to PythontProjectProperties and needs to be refactoried */
+            this.projectProperties.put(PROJECT_NAME, this.project.getName());
+        }
+        // description
+        if (this.description != null) {
+            this.projectProperties.put(PROJECT_DESCRIPTION, this.description);
+        } else {
+            // do it based on project name or specically the ProjectInfo attribure
+            
+            /* TODO: Need to determine if "PythonInfo" may be serving similar 
+            puporpse to PythontProjectProperties and needs to be refactoried */
+            
+            this.projectProperties.put(PROJECT_NAME, this.project.getDescription());
+        }
+
         if (this.mainModule != null) {
             this.projectProperties.put(MAIN_FILE, this.mainModule);
         } else {
             this.projectProperties.put(MAIN_FILE, EMPTY_VALUE);
         }
         
-        if (this.encoding != null) {
-            this.projectProperties.put(SOURCE_ENCODING, this.encoding);
-       } else {
+//        if (this.encoding != null||!this.encoding.equals("")) {
+//            this.projectProperties.put(SOURCE_ENCODING, this.encoding);
+//       } else {
+//            this.projectProperties.put(SOURCE_ENCODING, DEFAULT_ENCODING);
+//        }
+        if (this.encoding == null || this.encoding.equals("")) {
             this.projectProperties.put(SOURCE_ENCODING, DEFAULT_ENCODING);
+       } else {
+            this.projectProperties.put(SOURCE_ENCODING, this.encoding);
         }
   
         if (this.appArgs != null) {
@@ -300,7 +349,16 @@ public class PythonProjectProperties {
         } else {
             this.projectProperties.put(ACTIVE_PLATFORM, EMPTY_VALUE);
         }
+        // TODO: Maybe move "save" activity to save project source related properties here instead of in save
         
+        // capture source related attributes to project properties
+        final SourceRoots sr = this.project.getSourceRoots();
+        if (this.sourceRoots == null) {
+            this.sourceRoots = this.getSourceRoots();
+        }
+        sr.putRoots(this.sourceRoots);
+        this.projectProperties.put(SRC_DIR, sr.getRoots());
+
         // store all the properties        
 //        helper.putProperties(AntProjectHelper.PROJECT_PROPERTIES_PATH, projectProperties);
 //        helper.putProperties(AntProjectHelper.PRIVATE_PROPERTIES_PATH, privateProperties);
@@ -434,6 +492,15 @@ public class PythonProjectProperties {
 //                (key, value) -> this.mainModule = (String)value);
 
         // load in properties to memory  and if not defined use default values
+        
+        this.projectProperties.put(PROJECT_NAME, 
+                this.projectProperties.getOrDefault(PROJECT_NAME, 
+                        (name!=null)?name:EMPTY_VALUE));
+
+        this.projectProperties.put(PROJECT_DESCRIPTION, 
+                this.projectProperties.getOrDefault(PROJECT_DESCRIPTION, 
+                        (description!=null)?description:EMPTY_VALUE));
+
         this.projectProperties.put(MAIN_FILE, 
                 this.projectProperties.getOrDefault(MAIN_FILE, 
                         (mainModule!=null)?mainModule:EMPTY_VALUE));
@@ -636,4 +703,38 @@ public class PythonProjectProperties {
 //
 //        return props;
 //    }
+
+    public String getName() {
+        // if not set try to get from in memory property
+         if (this.name == null) {
+            this.name = projectProperties.getProperty(PROJECT_NAME);
+        }
+         // still not name so set to default
+         if (this.name == null) {
+            this.name = EMPTY_VALUE;
+        }
+
+         
+        return this.name;
+    }
+    public void setName(String projectNameField) {
+        this.name = projectNameField;
+    }
+    
+    public String getDescription() {
+        // if not set try to get from in memory property
+        if (this.description == null) {
+            this.description = projectProperties.getProperty(PROJECT_DESCRIPTION);
+        }
+         // still not name so set to default
+         if (this.description == null) {
+            this.description = EMPTY_VALUE;
+        }
+        return description;
+    }
+
+    public void setDescription(String projectDescriptionField) {
+        this.description = projectDescriptionField;
+    }
+    
 }

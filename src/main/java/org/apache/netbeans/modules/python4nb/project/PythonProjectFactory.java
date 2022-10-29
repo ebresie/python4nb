@@ -26,6 +26,10 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author ebres
  */
+/* TODO: Investigate if ProjectFactory2 usage may be preferred which may be better
+for multiple project and performance reasons.. 
+
+See https://netbeans.apache.org/tutorials/nbm-projecttype.html */
 
 @ServiceProvider(service=ProjectFactory.class)
 public class PythonProjectFactory implements  ProjectFactory {

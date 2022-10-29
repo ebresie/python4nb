@@ -91,10 +91,11 @@ public final class PythonPlatformProvider implements PlatformProviderImplementat
         return IDENT;
     }
 
-    @NbBundle.Messages("PythonPlatformProvider.name=Python")
+    @NbBundle.Messages({"PythonPlatformProvider.name=Python"})
     @Override
     public String getDisplayName() {
-        return Bundle.PythonPlatformProvider_name();
+        return NbBundle.getMessage(PythonPlatformProvider.class, "PythonPlatformProvider.name");
+        // return Bundle.PythonPlatformProvider_name();
     }
 
     @Override
@@ -189,23 +190,23 @@ public final class PythonPlatformProvider implements PlatformProviderImplementat
             // already enabled => noop
             return;
         }
-        PythonPackage packageJson = pythonSupport.getPythonPackage();
-        if (!packageJson.exists()) {
+        PythonPackage pythonPackage = pythonSupport.getPythonPackage();
+        if (!pythonPackage.exists()) {
             return;
         }
-        Map<String, Object> content = packageJson.getContent();
-        if (content == null) {
-            // some error
-            return;
-        }
-        Object engines = content.get(PythonPackage.FIELD_ENGINES);
-        if (engines instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> engines2 = (Map<String, Object>) engines;
-            if (engines2.containsKey(PythonPackage.FIELD_NODE)) {
-                Notifications.notifyPythonDetected(project);
-            }
-        }
+//        Map<String, Object> content = pythonPackage.getContent();
+//        if (content == null) {
+//            // some error
+//            return;
+//        }
+//        Object engines = content.get(PythonPackage.FIELD_ENGINES);
+//        if (engines instanceof Map) {
+//            @SuppressWarnings("unchecked")
+//            Map<String, Object> engines2 = (Map<String, Object>) engines;
+//            if (engines2.containsKey(PythonPackage.FIELD_NODE)) {
+//                Notifications.notifyPythonDetected(project);
+//            }
+//        }
     }
 
     void projectNameChanged(Project project, final String newName) {
@@ -226,20 +227,20 @@ public final class PythonPlatformProvider implements PlatformProviderImplementat
             return;
         }
         LOGGER.log(Level.FINE, "Processing project name change in project {0}", projectDir);
-        Map<String, Object> content = packageJson.getContent();
-        if (content == null) {
-            LOGGER.log(Level.FINE, "Project name change ignored in project {0}, package.json has no or invalid content", projectDir);
-            return;
-        }
+//        Map<String, Object> content = packageJson.getContent();
+//        if (content == null) {
+//            LOGGER.log(Level.FINE, "Project name change ignored in project {0}, package.json has no or invalid content", projectDir);
+//            return;
+//        }
         if (!StringUtils.hasText(newName)) {
             LOGGER.log(Level.FINE, "Project name change ignored in project {0}, new name is empty", projectDir);
             return;
         }
-        String name = (String) content.get(PythonPackage.FIELD_NAME);
-        if (Objects.equals(name, newName)) {
-            LOGGER.log(Level.FINE, "Project name change ignored in project {0}, new name same as current name in package.json", projectDir);
-            return;
-        }
+//        String name = (String) content.get(PythonPackage.FIELD_NAME);
+//        if (Objects.equals(name, newName)) {
+//            LOGGER.log(Level.FINE, "Project name change ignored in project {0}, new name same as current name in package.json", projectDir);
+//            return;
+//        }
         final String projectName = PythonUtils.getProjectDisplayName(project);
         if (preferences.isAskSyncEnabled()) {
             Notifications.askSyncChanges(project, new Runnable() {
@@ -272,14 +273,14 @@ public final class PythonPlatformProvider implements PlatformProviderImplementat
         "PythonPlatformProvider.sync.done=Project name {0} synced to package.json.",
     })
     void changeProjectName(PythonPackage pythonPackage, String newName, String projectName, String projectDir) {
-        try {
-            pythonPackage.setContent(Collections.singletonList(PythonPackage.FIELD_NAME), newName);
-        } catch (IOException ex) {
-            LOGGER.log(Level.INFO, null, ex);
-            Notifications.informUser(Bundle.PythonPlatformProvider_sync_error());
-            return;
-        }
-        Notifications.notifyUser(Bundle.PythonPlatformProvider_sync_title(projectName), Bundle.PythonPlatformProvider_sync_done(projectName));
+//        try {
+//            pythonPackage.setContent(Collections.singletonList(PythonPackage.FIELD_NAME), newName);
+//        } catch (IOException ex) {
+//            LOGGER.log(Level.INFO, null, ex);
+//            Notifications.informUser(Bundle.PythonPlatformProvider_sync_error());
+//            return;
+//        }
+//        Notifications.notifyUser(Bundle.PythonPlatformProvider_sync_title(projectName), Bundle.PythonPlatformProvider_sync_done(projectName));
         LOGGER.log(Level.FINE, "Project name change synced to package.json in project {0}", projectDir);
     }
 

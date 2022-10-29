@@ -181,16 +181,15 @@ public class PythonPlatformPanel extends javax.swing.JPanel {
         // no default defined yet attempt to discover
         if (defaultName == null) {
             manager.autoDetect();
+            // after discovery try to get default platform
+            defaultName = manager.getDefaultPlatform();
         }
-        
-        // after discovery try to get default platform
-        defaultName = manager.getDefaultPlatform();
-        
+         
         if (defaultName != null) {
             PythonPlatform defaultPlatform = manager.getPlatform(defaultName);
             if (defaultPlatform != null) {
                 platform = defaultPlatform;
-                platformList.setSelectedValue(defaultPlatform, true);
+                platformPanelList.setSelectedValue(defaultPlatform, true);
                 loadPlatform();
             }
         } else {
@@ -235,7 +234,7 @@ public class PythonPlatformPanel extends javax.swing.JPanel {
 
         pythonPlatformLabel = new javax.swing.JLabel();
         pythonPlatformListPane = new javax.swing.JScrollPane();
-        platformList = new javax.swing.JList<>();
+        platformPanelList = new javax.swing.JList<>();
         pythonPlatformAddButton = new javax.swing.JButton();
         pythonPlatformRemoveButton = new javax.swing.JButton();
         pythonPlatformAutoDetectButton = new javax.swing.JButton();
@@ -262,14 +261,14 @@ public class PythonPlatformPanel extends javax.swing.JPanel {
 
         pythonPlatformListPane.setName("pythonPlatformListPane"); // NOI18N
 
-        platformList.setModel(platformListModel);
-        platformList.setCellRenderer(new PlatformListCellRenderer());
-        platformList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+        platformPanelList.setModel(platformListModel);
+        platformPanelList.setCellRenderer(new PlatformListCellRenderer());
+        platformPanelList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                platformListValueChanged(evt);
+                platformPanelListValueChanged(evt);
             }
         });
-        pythonPlatformListPane.setViewportView(platformList);
+        pythonPlatformListPane.setViewportView(platformPanelList);
 
         pythonPlatformAddButton.setText("Add");
         pythonPlatformAddButton.setName("pyPlatformAddButton"); // NOI18N
@@ -280,7 +279,6 @@ public class PythonPlatformPanel extends javax.swing.JPanel {
         });
 
         pythonPlatformRemoveButton.setText("Remove");
-        pythonPlatformRemoveButton.setEnabled(false);
         pythonPlatformRemoveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pythonPlatformRemoveButtonActionPerformed(evt);
@@ -503,13 +501,11 @@ public class PythonPlatformPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_pyPlatformMainCommandArgumentsFieldActionPerformed
 
     private void pythonPlatformRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pythonPlatformRemoveButtonActionPerformed
-        int selectedIndex = platformList.getSelectedIndex();
-        String name = platformList.getSelectedValue();
+        int selectedIndex = platformPanelList.getSelectedIndex();
+        PythonPlatform selectedPlatform = (PythonPlatform)platformListModel.getElementAt(selectedIndex);
+        String  name = selectedPlatform.getName();
         if (selectedIndex != -1) {
-            // TODO: Fix this to remove platform from list
             manager.removePlatform( name);
-//            ((PythonPlatform)platformListModel.getElementAt(selectedIndex)).getId());
-//            ((PythonPlatform)platformList.getSelectionModel().getElementAt(selectedIndex)).getId());
             platformListModel.refresh();
             platform = null;
             clearPlatform();
@@ -523,7 +519,7 @@ public class PythonPlatformPanel extends javax.swing.JPanel {
 //        platformListModel.refresh();    }//GEN-LAST:event_pythonPlatformAutoDetectButtonActionPerformed
 
     private void pythonPlatformMakeDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pythonPlatformMakeDefaultButtonActionPerformed
-        int selectedIndex = platformList.getSelectedIndex();
+        int selectedIndex = platformPanelList.getSelectedIndex();
         if (selectedIndex != -1) {
             manager.setDefaultPlatform(
                     ((PythonPlatform)platformListModel.getElementAt(
@@ -542,20 +538,20 @@ public class PythonPlatformPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_pyPlatformMainNameFieldActionPerformed
 
-    private void platformListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_platformListValueChanged
+    private void platformPanelListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_platformPanelListValueChanged
               if (platform != null) {
             updatePlatform();
         }
-        int selectedIndex = platformList.getSelectedIndex();
+        int selectedIndex = platformPanelList.getSelectedIndex();
         if (selectedIndex != -1) {
             platform = (PythonPlatform)platformListModel.getElementAt(selectedIndex);
             loadPlatform();
         }
-    }//GEN-LAST:event_platformListValueChanged
+    }//GEN-LAST:event_platformPanelListValueChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList<String> platformList;
+    private javax.swing.JList<String> platformPanelList;
     private javax.swing.JButton pyPlatformCloseButton;
     private javax.swing.JButton pyPlatformHelpButton;
     private javax.swing.JLabel pyPlatformMainCommandArgumentLabel;

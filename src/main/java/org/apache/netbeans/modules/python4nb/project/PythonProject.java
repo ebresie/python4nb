@@ -15,6 +15,7 @@
  */
 package org.apache.netbeans.modules.python4nb.project;
 
+import org.apache.netbeans.modules.python4nb.project.ui.PythonCustomizerProvider;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -25,8 +26,9 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import org.apache.netbeans.modules.python4nb.platform.PythonSupport;
 import org.apache.netbeans.modules.python4nb.project.PythonSources;
-import org.apache.netbeans.modules.python4nb.ui.PythonCustomizerProvider;
+import org.apache.netbeans.modules.python4nb.project.ui.MyPythonCustomizerProvider;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
@@ -38,6 +40,7 @@ import org.netbeans.spi.project.support.ant.ReferenceHelper;
 import org.netbeans.spi.project.ui.CustomizerProvider;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
+import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
@@ -60,6 +63,7 @@ import org.openide.util.lookup.ProxyLookup;
  */
 public class PythonProject implements  Project {
 
+    public static final String PYTHON_PROJECT_TYPE = "org-apache-netbeans-modules-python4nb-project";
     public static final String SOURCES_TYPE_PYTHON = "python"; //NOI18N
     
     private final FileObject projectDir;
@@ -108,13 +112,16 @@ public class PythonProject implements  Project {
         if (lkp == null) {
             lkp = Lookups.fixed(new Object[]{
                 this,
-                new PythonActionProvider(this),
                 new PythonInfo(),
                 new PythonProjectLogicalView(this),
+                new PythonActionProvider(this),
                 new PythonSources(this),
+                new PythonSupport(this),
                 new PythonCustomizerProvider(this) //Project custmoizer
+//                new MyPythonCustomizerProvider(this)
 //TODO Determine if needed for future enhancements; remove if not needed
-//                , new CustomizerProvider() {
+//                , 
+//                new CustomizerProvider() {
 //                        @Override
 //                        public void showCustomizer() {
 //                            JOptionPane.showMessageDialog(
@@ -168,9 +175,24 @@ public class PythonProject implements  Project {
         return getTestRoots().getRoots();
     }
 
-    public Object getName() {
-        PythonInfo pi = lkp.lookup(PythonInfo.class);
-        return pi.getName();
+    public String getName() {
+        if (this.properties == null) {
+            this.properties = getProperties();
+        }
+        
+        return this.properties.getName();
+        
+//        PythonInfo pi = lkp.lookup(PythonInfo.class);
+//        return pi.getName();
+   }
+    public String getDescription() {
+        if (this.properties == null) {
+            this.properties = getProperties();
+        }
+        return this.properties.getDescription();
+        
+//        PythonInfo pi = lkp.lookup(PythonInfo.class);
+//        return pi.getDisplayName();
    }
 
     public PythonProjectProperties getProperties() {
@@ -195,9 +217,6 @@ public class PythonProject implements  Project {
         return properties;
      }
     
-    
- 
-
    private final class PythonInfo implements  ProjectInformation {
 
     @Override
@@ -263,6 +282,9 @@ public class PythonProject implements  Project {
         public ProjectNode(Node node, PythonProject project)
             throws DataObjectNotFoundException {
             super(node,
+//                    NodeFactorySupport.createCompositeChildren((Project)project, 
+//                            PYTHON_PROJECT_NODES),
+//                            PROP_NAME),
                     new FilterNode.Children(node),
                     new ProxyLookup(
                     new Lookup[]{
@@ -271,17 +293,22 @@ public class PythonProject implements  Project {
                     }));
             this.project = project;
         }
+            public static final String PYTHON_PROJECT_NODES = "Projects/org-apache-netbeans-modules-python4nb-project-node/Nodes";
 
         @Override
         public Action[] getActions(boolean arg0) {
             return new Action[]{
                         CommonProjectActions.newFileAction(),
+                        CommonProjectActions.newProjectAction(),
+                        CommonProjectActions.renameProjectAction(),
                         CommonProjectActions.copyProjectAction(),
+                        CommonProjectActions.moveProjectAction(),
                         CommonProjectActions.deleteProjectAction(),
-                        CommonProjectActions.customizeProjectAction(),
                         CommonProjectActions.closeProjectAction(),
-                    CommonProjectActions.setAsMainProjectAction(),
-                    CommonProjectActions.setProjectConfigurationAction()
+                        CommonProjectActions.openSubprojectsAction(),
+                        CommonProjectActions.setAsMainProjectAction(),
+                        CommonProjectActions.customizeProjectAction(),
+                        CommonProjectActions.setProjectConfigurationAction()
                         // TODO Establish applicable Python Project Actions
                         // , CommonProjectActions.TODO (see auto completion)
                     };

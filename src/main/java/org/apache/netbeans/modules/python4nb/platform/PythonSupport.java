@@ -38,6 +38,7 @@ import org.apache.netbeans.modules.python4nb.exec.PythonExecutable;
 //import org.apache.netbeans.modules.python4nb.file.PythonPackage;
 import org.apache.netbeans.modules.python4nb.editor.options.PythonOptions;
 import org.apache.netbeans.modules.python4nb.preferences.PythonPreferences;
+import org.apache.netbeans.modules.python4nb.project.PythonProject;
 import org.apache.netbeans.modules.python4nb.ui.Notifications;
 import org.apache.netbeans.modules.python4nb.ui.PythonRunPanel;
 //import org.apache.netbeans.modules.python4nb.ui.actions.NodeJsActionProvider;
@@ -59,6 +60,16 @@ import org.openide.util.Pair;
 import org.openide.util.RequestProcessor;
 import org.openide.util.WeakListeners;
 
+/**
+ * This class is for details related to python support available and related 
+ * packages present in the environment.
+ * 
+ * TODO: This class needs more updates as it is based on JSON based functionality
+ * and needs to be adapted for use in Python and applicable package/module
+ * type items.
+ * 
+ * @author ebres
+ */
 public final class PythonSupport {
 
     static final Logger LOGGER = Logger.getLogger(PythonSupport.class.getName());
@@ -77,7 +88,7 @@ public final class PythonSupport {
     final PythonPackage pythonPackage;
 
 
-    private PythonSupport(Project project) {
+    public PythonSupport(Project project) {
         assert project != null;
         this.project = project;
         actionProvider = null;  // new NodeJsActionProvider(project);
@@ -86,8 +97,10 @@ public final class PythonSupport {
         pythonPackage =  new PythonPackage(project.getProjectDirectory());
     }
 
-    @ProjectServiceProvider(service = PythonSupport.class, projectType = "org-netbeans-modules-python4nb-project") // NOI18N
+    @ProjectServiceProvider(service = PythonSupport.class, 
+            projectType = PythonProject.PYTHON_PROJECT_TYPE ) // NOI18N
     public static PythonSupport create(Project project) {
+        //"org-netbeans-modules-python4nb-project"
         PythonSupport support = new PythonSupport(project);
         // listeners
         PythonOptions  pythonOptions = PythonOptions.getInstance();
@@ -143,7 +156,7 @@ public final class PythonSupport {
     void projectOpened() {
         FileUtil.addFileChangeListener(pythonSourcesListener, PythonUtils.getPythonSources());
         preferences.addPreferenceChangeListener(preferencesListener);
-        pythonPackage.addPropertyChangeListener(packageJsonListener);
+//        pythonPackage.addPropertyChangeListener(packageJsonListener);
         // init node version
         PythonExecutable node = PythonExecutable.forProject(project, false);
         if (node != null) {
@@ -154,9 +167,9 @@ public final class PythonSupport {
     void projectClosed() {
         FileUtil.removeFileChangeListener(pythonSourcesListener, PythonUtils.getPythonSources());
         preferences.removePreferenceChangeListener(preferencesListener);
-        pythonPackage.removePropertyChangeListener(packageJsonListener);
+//        pythonPackage.removePropertyChangeListener(packageJsonListener);
         // cleanup
-        pythonPackage.cleanup();
+//        pythonPackage.cleanup();
     }
 
     //~ Inner classes
@@ -252,24 +265,24 @@ public final class PythonSupport {
                 return;
             }
             LOGGER.log(Level.FINE, "Processing Start file/args change in project {0}", projectDir);
-            Map<String, Object> content = pythonPackage.getContent();
-            if (content == null) {
-                LOGGER.log(Level.FINE, "Start file/args change ignored in project {0}, package.json has no or invalid content", projectDir);
-                return;
-            }
-            String startFile = null;
-            String startArgs = null;
-            String startScript = pythonPackage.getContentValue(String.class, PythonPackage.FIELD_SCRIPTS, PythonPackage.FIELD_START);
-            if (startScript != null) {
-                Pair<String, String> startInfo = PythonUtils.parseStartFile(startScript);
-                startFile = startInfo.first();
-                startArgs = startInfo.second();
-            }
-            if (Objects.equals(startFile, relNewStartFile)
-                    && Objects.equals(startArgs, newStartArgs)) {
-                LOGGER.log(Level.FINE, "Start file/args change ignored in project {0}, file and args same as in package.json", projectDir);
-                return;
-            }
+//            Map<String, Object> content = pythonPackage.getContent();
+//            if (content == null) {
+//                LOGGER.log(Level.FINE, "Start file/args change ignored in project {0}, package.json has no or invalid content", projectDir);
+//                return;
+//            }
+//            String startFile = null;
+//            String startArgs = null;
+//            String startScript = pythonPackage.getContentValue(String.class, PythonPackage.FIELD_SCRIPTS, PythonPackage.FIELD_START);
+//            if (startScript != null) {
+//                Pair<String, String> startInfo = PythonUtils.parseStartFile(startScript);
+//                startFile = startInfo.first();
+//                startArgs = startInfo.second();
+//            }
+//            if (Objects.equals(startFile, relNewStartFile)
+//                    && Objects.equals(startArgs, newStartArgs)) {
+//                LOGGER.log(Level.FINE, "Start file/args change ignored in project {0}, file and args same as in package.json", projectDir);
+//                return;
+//            }
             final String projectName = PythonUtils.getProjectDisplayName(project);
             if (preferences.isAskSyncEnabled()) {
                 final String relNewStartFileRef = relNewStartFile;
@@ -303,13 +316,13 @@ public final class PythonSupport {
                 sb.append(" "); // NOI18N
                 sb.append(newStartArgs);
             }
-            try {
-                pythonPackage.setContent(Arrays.asList(PythonPackage.FIELD_SCRIPTS, PythonPackage.FIELD_START), sb.toString());
-            } catch (IOException ex) {
-                LOGGER.log(Level.INFO, null, ex);
-                Notifications.informUser(Bundle.PreferencesListener_sync_error());
-                return;
-            }
+//            try {
+//                pythonPackage.setContent(Arrays.asList(PythonPackage.FIELD_SCRIPTS, PythonPackage.FIELD_START), sb.toString());
+//            } catch (IOException ex) {
+//                LOGGER.log(Level.INFO, null, ex);
+//                Notifications.informUser(Bundle.PreferencesListener_sync_error());
+//                return;
+//            }
             Notifications.notifyUser(Bundle.PreferencesListener_sync_title(projectName), Bundle.PreferencesListener_sync_done());
             LOGGER.log(Level.FINE, "Start file/args change synced to package.json in project {0}", projectDir);
         }

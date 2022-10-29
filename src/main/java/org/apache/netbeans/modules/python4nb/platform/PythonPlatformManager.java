@@ -41,6 +41,7 @@ import org.apache.netbeans.modules.python4nb.exec.PythonExecution;
 import org.netbeans.api.project.ProjectManager;
 import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.netbeans.spi.project.support.ant.PropertyUtils;
+import org.openide.awt.StatusDisplayer;
 import org.openide.modules.InstalledFileLocator;
 import org.openide.util.Exceptions;
 import org.openide.util.Mutex;
@@ -535,9 +536,10 @@ public class PythonPlatformManager implements Serializable {
         //assert !SwingUtilities.isEventDispatchThread(); // Slow, don't block the UI
         if (autoDetecting) {
             // Already in progress
+            LOGGER.log(Level.INFO, "** Already auto detecting platforms");
             return;
         }
-
+        
         try {
             autoDetecting = true;
             //findBundledJython();
@@ -549,7 +551,8 @@ public class PythonPlatformManager implements Serializable {
                 defaultPlatform = deflt.getId();
                 platforms.put(defaultPlatform, deflt);
             }
-
+            
+            StatusDisplayer.getDefault().setStatusText("Auto detecting Python platforms.");
             PythonAutoDetector ad = new PythonAutoDetector();
 
             if (Utilities.isWindows()) {
@@ -588,11 +591,14 @@ public class PythonPlatformManager implements Serializable {
             Exceptions.printStackTrace(py);
         } finally {
             autoDetecting = false;
+            StatusDisplayer.getDefault().setStatusText("Done auto detecting Python platforms.");
         }
         // after initial detection, need to reload
         load();
         Util.setFirstPlatformTouch(false); // What is this - shouldn't we save the previously set platform and reset it here?
+//  TODO: Think this or elsewhere in autoDetect is causing a failure on initial setup which causes a loop of autodetecs
         firePlatformsChanged();
+        StatusDisplayer.getDefault().setStatusText("");
     }
 
     // We don't need to introspect the bundled Jython - we know everything about it

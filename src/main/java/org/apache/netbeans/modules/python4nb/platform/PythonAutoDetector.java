@@ -211,6 +211,17 @@ class PythonAutoDetector {
         if (dir.isDirectory()) { //are we already IN the ?ython dir?
             String spath = dir.getName();
 
+            /*
+            TODO: Make more efficient maybe using Java 8 Files.walk and filters like
+                Files.walk(Paths.get(dir))
+                .filter(Files::isRegularFile)
+                .forEach(filePath -> {
+                    String name = filePath.getFilename().toString();
+                    if (isPythonDirectory(filePath)) {
+                        System.out.println(filePath.getFileName());
+                    }
+                });
+            */
             if( isPythonDirectory(spath) ){
                 searchNestedDirectoies = true; // must set each time
                 processAction(dir);
@@ -221,12 +232,25 @@ class PythonAutoDetector {
             if(children != null){
                 for (int i=0; i<children.length; i++) {
                     File fDirectory = new File(dir, children[i]);
-                    if (fDirectory.isDirectory() || fDirectory.isFile()) {
+//                    if (fDirectory.isDirectory() || fDirectory.isFile()) {
+                    // check through directories for possible python directories
+                    if (fDirectory.isDirectory() ) {
                         spath = fDirectory.getName();
                         if (isPythonDirectory(spath)) {
                             searchNestedDirectoies = true; // must set each time
                             processAction(fDirectory);
+                        } else {
+                            // the child level is not a python specific directory
+                            searchNestedDirectoies = true; // must set each time
+                            
+                            // but what about the grandchilder
+                            // maybe re-run traverseDirectory with fDirectory if directory
+                            traverseDirectory(fDirectory);
                         }
+                    } else {
+                        // not a directory so maybe a file
+                        continue;
+                        // maybe check if it's a python executable?
                     }
                 }
             }
