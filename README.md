@@ -28,6 +28,15 @@ Once more development is more mature, expectations is a release will be availabl
 - Upon completion of updates for given issues, a pull request will be made, reviewed, and upon completion integrated into the master branch in github for coming release.
 
 # Change log
+## Release 0.3
+Additional updates (more work to follow) related to the following
+- [Implement Python platform discovery feature](https://github.com/ebresie/python4nb/issues/3)
+- [Get Project Properties](https://github.com/ebresie/python4nb/issues/20)
+- [nbproject\project.properites not created correctly](https://github.com/ebresie/python4nb/issues/23)
+- [Python Project Setup](https://github.com/ebresie/python4nb/issues/8)
+- [Implement Python Execution Feature](https://github.com/ebresie/python4nb/issues/4)
+- [Update dependencies to more recent version to reduce security concerns](https://github.com/ebresie/python4nb/issues/25)
+
 ## Release 0.2
 - [Python Platform Configuration and Installation](https://github.com/ebresie/python4nb/issues/3)
 - [Python Execution Functionality](https://github.com/ebresie/python4nb/issues/4)
@@ -40,7 +49,7 @@ Once more development is more mature, expectations is a release will be availabl
 For version, will attempt to comply with major/minor/patch versioning as defined [here](https://semver.org/)
 
 ## TODO (For more specifics details, see [project issue area](https://github.com/ebresie/python4nb/issues):
-- [Complete Python Project functionality](https://github.com/ebresie/python4nb/issues/8)
+- [Further updates for Python Project properties](https://github.com/ebresie/python4nb/issues/8)
 - [Complete Python Debugging](https://github.com/ebresie/python4nb/issues/5)
 - [Complete Python Module Management](https://github.com/ebresie/python4nb/issues/6)
 - [Complete Unit Test functionality](https://github.com/ebresie/python4nb/issues/7)
