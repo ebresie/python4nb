@@ -26,12 +26,16 @@ import org.openide.util.lookup.ServiceProvider;
  *
  * @author ebres
  */
+/* TODO: Investigate if ProjectFactory2 usage may be preferred which may be better
+for multiple project and performance reasons.. 
+
+See https://netbeans.apache.org/tutorials/nbm-projecttype.html */
 
 @ServiceProvider(service=ProjectFactory.class)
 public class PythonProjectFactory implements  ProjectFactory {
 
-    //Specifies when a project is a project, i.e.,
-    //if "customer.txt" is present in a folder:*
+    /** Checks if project folder is a python project (i.e. if ".py" files are 
+     * present in folder) */
     @Override
     public boolean isProject(FileObject projectDirectory) {
         // search if there are any 
@@ -56,7 +60,9 @@ public class PythonProjectFactory implements  ProjectFactory {
 
     @Override
     public void saveProject(final Project project) throws IOException, ClassCastException {
-        // leave unimplemented for the moment
+        PythonProject pyProject = (PythonProject)project;
+        PythonProjectProperties properties = pyProject.getProperties();
+        properties.save();
     }
 
 }

@@ -137,7 +137,7 @@ public final class PythonLibraries {
 
         @Override
         public void addNotify() {
-            pythonPackage.addPropertyChangeListener(WeakListeners.propertyChange(this, pythonPackage));
+//            pythonPackage.addPropertyChangeListener(WeakListeners.propertyChange(this, pythonPackage));
         }
 
         @Override
@@ -238,7 +238,8 @@ public final class PythonLibraries {
         }
 
         public boolean hasDependencies() {
-            return !pythonPackage.getDependencies().isEmpty();
+//            return !pythonPackage.getDependencies().isEmpty();
+            return !pythonPackage.exists(); //.getDependencies().isEmpty();
         }
 
         public void refreshDependencies() {
@@ -267,17 +268,17 @@ public final class PythonLibraries {
 
 
         private void setKeys() {
-            PythonPackage.PipDependencies dependencies = pythonPackage.getDependencies();
-            if (dependencies.isEmpty()) {
-                setKeys(Collections.<PipLibraryInfo>emptyList());
-                return;
-            }
-            List<PipLibraryInfo> keys = new ArrayList<>(dependencies.getCount());
-            keys.addAll(getKeys(dependencies.dependencies, null, null));
-            keys.addAll(getKeys(dependencies.devDependencies, DEV_BADGE, Bundle.PipLibrariesChildren_library_dev()));
-            keys.addAll(getKeys(dependencies.optionalDependencies, OPTIONAL_BADGE, Bundle.PipLibrariesChildren_library_optional()));
-            keys.addAll(getKeys(dependencies.peerDependencies, PEER_BADGE, Bundle.PipLibrariesChildren_library_peer()));
-            setKeys(keys);
+//            PythonPackage.PipDependencies dependencies = pythonPackage.getDependencies();
+//            if (dependencies.isEmpty()) {
+//                setKeys(Collections.<PipLibraryInfo>emptyList());
+//                return;
+//            }
+//            List<PipLibraryInfo> keys = new ArrayList<>(dependencies.getCount());
+//            keys.addAll(getKeys(dependencies.dependencies, null, null));
+//            keys.addAll(getKeys(dependencies.devDependencies, DEV_BADGE, Bundle.PipLibrariesChildren_library_dev()));
+//            keys.addAll(getKeys(dependencies.optionalDependencies, OPTIONAL_BADGE, Bundle.PipLibrariesChildren_library_optional()));
+//            keys.addAll(getKeys(dependencies.peerDependencies, PEER_BADGE, Bundle.PipLibrariesChildren_library_peer()));
+//            setKeys(keys);
         }
 
         @NbBundle.Messages({

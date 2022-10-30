@@ -37,7 +37,9 @@ import org.openide.util.Exceptions;
 
 
 
-@NodeFactory.Registration(projectType = "org-netbeans-modules-python4nb-project", position = 10)
+@NodeFactory.Registration(
+        projectType = "org-apache-netbeans-modules-python4nb-project", 
+        position = 10)
 public class PythonNodeFactory implements  NodeFactory {
 
     @Override
@@ -58,7 +60,7 @@ public class PythonNodeFactory implements  NodeFactory {
         @Override
         public List keys() {
             FileObject textsFolder =
-                project.getProjectDirectory().getFileObject("texts");
+                project.getProjectDirectory(); //.getFileObject("texts");
             List result = new ArrayList();
             if (textsFolder != null) {
                 for (FileObject textsFolderFile : textsFolder.getChildren()) {
@@ -77,10 +79,10 @@ public class PythonNodeFactory implements  NodeFactory {
 //            return new FilterNode(node);
 //        }
 
-        @Override
-        public Node node(Object k) {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
+//        @Override
+//        public Node node(Object k) {
+//            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//        }
         
         @Override
         public void addNotify() {
@@ -96,6 +98,12 @@ public class PythonNodeFactory implements  NodeFactory {
 
         @Override
         public void removeChangeListener(ChangeListener cl) {
+        }
+
+        @Override
+        public Node node(Object key) {
+            return new FilterNode((Node)key);
+
         }
 
 

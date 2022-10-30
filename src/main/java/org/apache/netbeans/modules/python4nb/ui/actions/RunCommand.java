@@ -70,22 +70,28 @@ public class RunCommand extends Command {
         if ( platform == null )
           return ; // invalid platform user has been warn in check so safe to return
          
-        if (getProperties().getMainModule() == null ||
-                getProperties().getMainModule().equals("")){
-            String main = Utils.chooseMainModule(getProject());
-            getProperties().setMainModule(main);
-            getProperties().save();
-        }
-        //System.out.println("main module " + getProperties().getMainModule());
+//        PythonProjectProperties projectProperties = getProperties();
+//        
+//        // projects main module not selected yet for the project
+//        if (projectProperties.getMainModule() == null ||
+//                projectProperties.getMainModule().equals("")){
+//            String main = Utils.chooseMainModule(getProject());
+//            projectProperties.setMainModule(main);
+//            projectProperties.save();
+//        }
+
+        // get the file object for the main file of the project
         FileObject script = findMainFile(pyProject);       
-        //assert script != null;        
-        if (script == null ){
-            String main = Utils.chooseMainModule(getProject());
-            getProperties().setMainModule(main);
-            getProperties().save();
-            script = findMainFile(pyProject);
-        }
-        final FileObject parent = script.getParent();
+        assert script != null;
+        
+//        // if main file not found then trigger user to select file
+//        if (script == null ){
+//            String main = Utils.chooseMainModule(getProject());
+//            projectProperties.setMainModule(main);
+//            projectProperties.save();
+//            script = findMainFile(pyProject);
+//        }
+        FileObject parent = script.getParent();
         PythonExecution pyexec = new PythonExecution();
         pyexec.setDisplayName (ProjectUtils.getInformation(pyProject).getDisplayName());                
         //Set work dir - probably we need a property to store work dir
@@ -133,6 +139,17 @@ public class RunCommand extends Command {
     }
     
     protected static FileObject findMainFile (final PythonProject pyProject) {
+        PythonProjectProperties projectProperties = pyProject.getProperties();
+        
+        // projects main module not selected yet for the project
+        if (projectProperties.getMainModule() == null ||
+                projectProperties.getMainModule().equals("")){
+//            String main = Utils.chooseMainModule(getProject());
+            String main = Utils.chooseMainModule(pyProject);
+            projectProperties.setMainModule(main);
+            projectProperties.save();
+        }
+        
         final FileObject[] roots = pyProject.getSourceRoots().getRoots();
         final String mainFile = pyProject.getProperties().getMainModule();
         if (mainFile == null) {
